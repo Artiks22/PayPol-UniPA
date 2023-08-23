@@ -64,8 +64,8 @@ public class CardManager extends HttpServlet {
 
 
                 JObj.put("success", true);
-                JObj.put("message", "Il credito residuo della carta selezionata è:");
-                JObj.put("value", balance + "$");
+                JObj.put("message", "Il credito residuo della carta selezionata è:  ");
+                JObj.put("value", balance + "€");
 
                 String obj = JObj.toString();
                 response.setContentType("application/json");
@@ -257,14 +257,14 @@ public class CardManager extends HttpServlet {
                         throw new RuntimeException(e);
                     }
                     JObj.put("success", true);
-                    JObj.put("message", "La carta è stata bloccata con successo!");
+                    JObj.put("message", "La carta è stata bloccata");
                     response.setContentType("application/json");
                     String location = JObj.toString();
                     response.setCharacterEncoding("UTF-8");
                     response.getWriter().write(location);
                 } else if (statoCarta) {
                     JObj.put("success", false);
-                    JObj.put("message", "La carta risulta già essere Bloccata!");
+                    JObj.put("message", "La carta risulta già essere Bloccata");
                     response.setContentType("application/json");
                     String location = JObj.toString();
                     response.setCharacterEncoding("UTF-8");
@@ -280,14 +280,14 @@ public class CardManager extends HttpServlet {
                         throw new RuntimeException(e);
                     }
                     JObj.put("success", true);
-                    JObj.put("message", "La carta è stata sbloccata con successo!");
+                    JObj.put("message", "La carta è stata sbloccata");
                     response.setContentType("application/json");
                     String location = JObj.toString();
                     response.setCharacterEncoding("UTF-8");
                     response.getWriter().write(location);
                 } else if (!statoCarta) {
                     JObj.put("success", false);
-                    JObj.put("message", "La carta risulta già essere sbloccata!");
+                    JObj.put("message", "La carta risulta già essere sbloccata");
                     response.setContentType("application/json");
                     String location = JObj.toString();
                     response.setCharacterEncoding("UTF-8");

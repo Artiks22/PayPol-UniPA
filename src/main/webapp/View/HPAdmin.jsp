@@ -135,10 +135,8 @@
     </div>
 </div>
 
-
-
 <!-- MODAL NUMERO 2 -- BLOCCO SBLOCCO CARTA -->
-<div class="modal" id="modal2">
+<div class="modal fade" id="modal2">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
 
@@ -150,7 +148,18 @@
 
             <!-- Modal body -->
             <div class="modal-body">
-
+                <form id="formUpdateStatus" action="${pageContext.request.contextPath}/CardManager/UpdateStatusCard" method="POST">
+                    <label for="cardNumber">Inserisci Numero Carta:</label><br>
+                    <input type="text" id="cardNumber" name="cardNumber"><br>
+                    <label for="movimento">Operazione:</label><br>
+<%--                    <input list="operation" name="movimento" id="movimento">--%>
+                    <input class="form-control" list="operation" id="movimento" name="movimento" placeholder="Scegli operazione fra Blocco o Sblocco"><br>
+                    <datalist id="operation">
+                        <option value="Blocca">
+                        <option value="Sblocca">
+                    </datalist>
+                    <button id="blockUnblockButton" class="btn btn-primary" type="submit"> Effettua Operazione</button>
+                </form>
             </div>
 
             <!-- Modal footer -->
@@ -162,7 +171,37 @@
     </div>
 </div>
 
+<!-- MODAL NUMERO 3 -- CONTROLLO CREDITO RESIDUO -->
+<div class="modal fade" id="modal3">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
 
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Controllo credito residuo</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal body -->
+            <div id="divBalance" class="modal-body">
+                <form id="formCheckBalance" action="${pageContext.request.contextPath}/CardManager/checkBalance" method="GET" class="form-container">
+                    <label for="checkCredito">Numero Carta:</label><br>
+                    <input type="text" placeholder="Inserire Num. Carta" id="checkCredito" name="CardCredit"><br><br>
+                    <button id="checkBalanceButton" class="btn btn-primary" type="submit"> Effettua Operazione</button>
+                </form>
+                <br>
+                <div id="balanceResult"></div>
+
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545" data-bs-dismiss="modal" onclick="chiudiFunction()">Chiudi</button>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 
 
@@ -170,6 +209,12 @@
 </body>
 <script>
     $('#modal1').on('shown.bs.modal', function () {
+        $('#myInput').trigger('focus')
+    })
+    $('#modal2').on('shown.bs.modal', function () {
+        $('#myInput').trigger('focus')
+    })
+    $('#modal3').on('shown.bs.modal', function () {
         $('#myInput').trigger('focus')
     })
 
@@ -205,6 +250,73 @@
 
         });
 
+    $('#formUpdateStatus')
+        .ajaxForm({
+            url : '${pageContext.request.contextPath}/CardManager/UpdateStatusCard', // or whatever
+            dataType : 'json',
+            success : function (response) {
+
+                if (response.success) {
+                    // Se success è true, inserisci l'alert all'interno del messaggio.
+                    var htmlToInsert = `
+                          <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Operazione Eseguita con successo!</strong>   ` + response.message +
+                        `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>`;
+                    $("#responseDiv").html(htmlToInsert);
+
+                } else {
+                    // Se success è false, aggiungi un messaggio di errore
+                    var htmlToInsert = `
+                          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Operazione Fallita!</strong>   ` + response.message +
+                        `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>`;
+                    $("#responseDiv").html(htmlToInsert);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log("Errore nella richiesta AJAX: " + error);
+            }
+
+
+        });
+
+    $('#formCheckBalance')
+        .ajaxForm({
+            url : '${pageContext.request.contextPath}/CardManager/checkBalance', // or whatever
+            dataType : 'json',
+            success : function (response) {
+
+                if (response.success) {
+
+                    var htmlToInsert = `
+                          <div class="alert alert-primary alert-dismissible fade show" role="alert"> ` + response.message + `<strong>` + response.value +
+                        `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>`;
+                    $("#balanceResult").html(htmlToInsert);
+
+                } else {
+                    // Se success è false, aggiungi un messaggio di errore
+                    $("#modal3").modal("hide");
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+
+                    var htmlToInsert = `
+                          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Operazione Fallita!</strong>   ` + response.message +
+                        `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>`;
+                    $("#responseDiv").html(htmlToInsert);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log("Errore nella richiesta AJAX: " + error);
+            }
+
+
+        });
+
 
     $(document).ready(function() {
         $("#formCreazione").submit(function(event) {
@@ -216,11 +328,27 @@
             $("#modal1").modal("hide");
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
-
-
-
         });
     });
+
+    $(document).ready(function() {
+        $("#formUpdateStatus").submit(function(event) {
+            // Prevent default form submission
+            event.preventDefault();
+
+            // chiudo modal dopo il submit
+            $("#modal2").modal("hide");
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+        });
+    });
+
+
+    function chiudiFunction() {
+        $('#balanceResult').empty()
+    }
+
+
 
 </script>
 </html>
