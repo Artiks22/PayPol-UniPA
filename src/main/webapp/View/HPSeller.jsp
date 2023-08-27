@@ -157,20 +157,38 @@
 
             <!-- Modal body -->
             <div class="modal-body">
-                <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545">Genera PDF</button>
-                <a href="${pageContext.request.contextPath}/AdminUserManager/getMovements">    <button id="bottoneGenerazione" type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" >Genera Report</button>  </a>
+<%--                <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545">Genera PDF</button>--%>
+                <button id="bottoneGenerazione" type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" >Genera Report</button>
 
-                <div id="transactionHistoryDiv"> </div>
+                <div id="transactionHistoryDiv">
+                    <table id="transactionHistoryTable" class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID Movimento</th>
+                        <th scope="col">Data Movimento</th>
+                        <th scope="col">Carta Ricevente</th>
+                        <th scope="col">Importo</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+                </div>
             </div>
 
             <!-- Modal footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545" data-bs-dismiss="modal">Chiudi</button>
+                <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545" data-bs-dismiss="modal" onclick="resetFunction()">Chiudi</button>
             </div>
 
         </div>
     </div>
 </div>
+
+
+
+
 
 <!-- MODAL NUMERO 3 -- CONTROLLO CREDITO RESIDUO -->
 <div class="modal fade" id="modal3">
@@ -252,6 +270,40 @@
         });
 
 
+            $("#bottoneGenerazione").click(function() {
+                $("#bottoneGenerazione").prop("disabled", true);
+            $.ajax({
+                url: '${pageContext.request.contextPath}/AdminUserManager/getMovements',
+                method: "GET",
+                dataType: "json",
+                success: function(response) {
+                    if (response.success) {
+                        var movements = response.movements;
+                        var tableBody = $("#transactionHistoryTable tbody");
+
+                        // Itera attraverso i movimenti e crea le righe della tabella
+                        $.each(movements, function(index, movement) {
+                            var row = $("<tr>");
+                            row.append($("<td>").text(movement.idMovimento));
+                            row.append($("<td>").text(movement.dataMovimento));
+                            row.append($("<td>").text(movement.cartaRicevente));
+                            row.append($("<td>").text(movement.importo));
+                            tableBody.append(row);
+                        });
+
+
+                    } else {
+                        console.log("Errore nella risposta del server");
+                        $("#bottoneGenerazione").prop("disabled", false);
+                    }
+                },
+                error: function() {
+                    console.log("Errore nella richiesta AJAX");
+                    $("#bottoneGenerazione").prop("disabled", false);
+                }
+            });
+        });
+
 
 
     $('#formCheckBalance')
@@ -293,7 +345,10 @@
     function chiudiFunction() {
         $('#balanceResult').empty()
     }
-
+    function resetFunction() {
+        $("#bottoneGenerazione").prop("disabled", false);
+        $("#transactionHistoryTable tbody").empty()
+    }
     //deprecate non mi servivano più.
     // $(document).ready(function() {
     //     $("#formCreazione").submit(function(event) {

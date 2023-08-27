@@ -8,39 +8,100 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Utente</title>
+    <title>Benvenuto Utente</title>
+    <%--  Boostrap components --%>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-    <jsp:include page="/View/Styles/styletest.jsp"></jsp:include>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" type="text/css" />
+
+    <%--  Jquery--%>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="https://malsup.github.io/jquery.form.js"></script>
 </head>
 <body>
-<h1>Funzioni Utente</h1>
-<!-- A button to open the popup form -->
 
-<a href="${pageContext.request.contextPath}/AuthenticationManager/logout">Logout</a><br>
-<button class="open-button" onclick="openForm()">Open Form</button>
-
-<!-- The form -->
-<div class="form-popup" id="myForm">
-
-        <form action="${pageContext.request.contextPath}/CardManager/checkBalance" method="GET" class="form-container">
-            <h1>Controllo Credito Residuo!</h1>
-            <label for="checkCredito">Numero Carta</label>
-            <input type="text" placeholder="Inserire Num. Carta" id="checkCredito" name="CardCredit"><br>
-            <button id="btn-submit" type="submit"  class="btn"> Check Credito</button>
-            <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
-        </form>
-
+<div class="pb-5">
+    <jsp:include page="/View/components/navbarlogged.jsp"></jsp:include>
 </div>
+
+<section class="text-center">
+    <h3 class="mb-5"><strong>Funzionalità Utente</strong></h3>
+
+
+
+    <div class="row mt-2">
+        <%--DIV CONTENTENTE L'ALERT RIGUARDANTE L'OPERAZIONE RIUSCITA CON SUCCESSO O MENO--%>
+        <div id="responseDiv"></div>
+
+        <%--ADDEBITO O ACCREDITO FUNCTION--%>
+        <div class="col-lg-3 col-md-12 mb-4  mx-auto">
+            <div class="card">
+                <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                    <img src="img/addebitoaccredito.jpg" class="img-fluid" />
+                    <a href="#!">
+                        <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Accredito / Addebito Carta</h5>
+                    <p class="card-text">
+                        Effettuare accredito o addebito su carta di credito.
+                    </p>
+                    <button type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" data-bs-toggle="modal" data-bs-target="#modal1">
+                        Vai
+                    </button>
+                </div>
+            </div>
+        </div>
+        <%--GENERAZIONE REPORT CON LE OPERAZIONI FATTE--%>
+        <div class="col-lg-3 col-md-6 mb-4 mx-auto">
+            <div class="card">
+                <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                    <img src="img/Transaction%20History.jpg" class="img-fluid" />
+                    <a href="#!">
+                        <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Generazione Report Operazioni</h5>
+                    <p class="card-text">
+                        Genera un report delle operazioni contenente accrediti e addebiti delle proprie carte.
+                    </p>
+                    <button type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" data-bs-toggle="modal" data-bs-target="#modal2">
+                        Vai
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <%--CHECK BALANCE FUNCTIONALITY--%>
+        <div class="col-lg-3 col-md-6 mb-4 mx-auto">
+            <div class="card">
+                <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                    <img src="img/card%20balance.jpg" class="img-fluid" />
+                    <a href="#!">
+                        <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Controllo Credito Residuo</h5>
+                    <p class="card-text">
+                        Controlla credito residuo su Carta di Credito
+                    </p>
+                    <button type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" data-bs-toggle="modal" data-bs-target="#modal3">
+                        Vai
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
 
 </body>
 <script>
-    function openForm() {
-        document.getElementById("myForm").style.display = "block";
-    }
 
-    function closeForm() {
-        document.getElementById("myForm").style.display = "none";
-    }
 </script>
 </html>
