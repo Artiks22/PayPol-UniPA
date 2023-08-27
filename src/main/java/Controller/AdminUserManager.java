@@ -126,7 +126,7 @@ public class AdminUserManager extends HttpServlet {
             response.getWriter().write(jobj);
         } else {
             JObj.put("success", false);
-            JObj.put("message", "movimenti non ottenuti");
+            JObj.put("message", "Non sono presenti movimenti");
             String location = JObj.toString();
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");

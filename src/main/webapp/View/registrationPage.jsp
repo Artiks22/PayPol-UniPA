@@ -11,14 +11,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-    <%--  bootstrap components --%>
+    <%--  Boostrap components --%>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" type="text/css" />
-<%--    jquery --%>
+    <%--  Jquery--%>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-
-
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="https://malsup.github.io/jquery.form.js"></script>
+    <jsp:include page="/View/Styles/loginpageStyle.jsp"></jsp:include>
 
     <title>PayPol Registration</title>
 </head>
@@ -30,53 +31,154 @@
 
 <section >
 
-    <h1> Registra nuovo utente! </h1>
+    <section class="h-100 bg-dark">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col">
+                    <div class="card card-registration my-4">
+                        <div class="row g-0">
+                            <div class="col-xl-6 d-none d-xl-block">
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                                     alt="Sample photo" class="img-fluid"
+                                     style="border-top-left-radius: .25rem; border-bottom-left-radius: .25rem;" />
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="card-body p-md-5 text-black">
+                                    <form id="form">
+                                    <h3 class="mb-5 text-uppercase">Form Registrazione Utente</h3>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <input type="text" id="nome" name="nome" class="form-control form-control-lg" />
+                                                <label class="form-label" for="nome">Nome</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <input type="text" id="cognome" name="cognome" class="form-control form-control-lg" />
+                                                <label class="form-label" for="cognome">Cognome</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="mb-4">
+                                            <div class="form-outline mb-4">
+                                                <input type="text" id="email" name="email" class="form-control form-control-lg" />
+                                                <label class="form-label" for="email">Email</label>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="d-md-flex justify-content-start align-items-center mb-4 py-2">
+
+                                        <h6 class="mb-0 me-4">Tipologia Utente: </h6>
+
+
+                                        <div class="form-check form-check-inline mb-0 me-4">
+                                            <input class="form-check-input" type="radio" name="tipoUtente" id="tipoUtente2"
+                                                   value="2" checked/>
+                                            <label class="form-check-label" for="tipoUtente2">Negoziante</label>
+                                        </div>
+
+                                        <div class="form-check form-check-inline mb-0 me-4">
+                                            <input class="form-check-input" type="radio" id="tipoUtente1" name="tipoUtente"
+                                                   value="1" />
+                                            <label class="form-check-label" for="tipoUtente1">Cliente</label>
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                    <div class="form-outline mb-4" id="registrationPassword">
+                                        <input type="password" id="password" name="password" class="form-control form-control-lg" />
+                                        <label class="form-label" for="password">Password</label>
+                                    </div>
+
+                                    <div class="form-outline mb-4">
+                                        <input type="password" id="confirmpassword" name="confirmpassword" class="form-control form-control-lg" />
+                                        <label class="form-label" for="confirmpassword">Conferma Password</label>
+                                    </div>
+
+
+                                    <div class="d-flex justify-content-end pt-3">
+                                        <button id="resetButton" type="button" class="btn btn-light btn-lg">Resetta campi</button>
+                                        <button id="btn-submit" type="submit" style="--bs-btn-bg: rgb(217,153,26)" class="btn btn-warning btn-lg ms-2">Registrati</button>
+
+
+                                    </div>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
 <%-- action="${pageContext.request.contextPath}/AuthenticationManager/registration" method="POST" */--%>
-    <form id="form">
+<%--    <form id="form">--%>
 
 
 
-        <br>
-        <fieldset>
-            <legend>Tipologia Utente:</legend>
-            <div>
+<%--        <br>--%>
+<%--        <fieldset>--%>
+<%--            <legend>Tipologia Utente:</legend>--%>
+<%--            <div>--%>
 
-                <input type="radio" id="tipoUtente2" name="tipoUtente" value="2" checked>
-                <label for="tipoUtente2">Negoziante</label><br>
-
-
-                <input type="radio" id="tipoUtente1" name="tipoUtente" value="1">
-                <label for="tipoUtente1">Cliente</label><br>
-            </div>
-        </fieldset>
+<%--                <input type="radio" id="tipoUtente2" name="tipoUtente" value="2" checked>--%>
+<%--                <label for="tipoUtente2">Negoziante</label><br>--%>
 
 
+<%--                <input type="radio" id="tipoUtente1" name="tipoUtente" value="1">--%>
+<%--                <label for="tipoUtente1">Cliente</label><br>--%>
+<%--            </div>--%>
+<%--        </fieldset>--%>
 
-        <label for="email">Email</label><br>
-        <input type="email" id="email" name="email"><br>
 
-        <label for="nome">Nome:</label><br>
-        <input type="text" id="nome" name="nome"><br>
 
-        <label for="Cognome">Cognome:</label><br>
-        <input type="text" id="cognome" name="cognome"><br>
+<%--        <label for="email">Email</label><br>--%>
+<%--        <input type="email" id="email" name="email"><br>--%>
 
-        <div class="mb-3" id="registrationPassword">
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password"><br>
-        </div>
+<%--        <label for="nome">Nome:</label><br>--%>
+<%--        <input type="text" id="nome" name="nome"><br>--%>
 
-        <label for="confirmpassword">Conferma password:</label><br>
-        <input type="password" id="confirmpassword" name="confirmpassword"><br>
+<%--        <label for="Cognome">Cognome:</label><br>--%>
+<%--        <input type="text" id="cognome" name="cognome"><br>--%>
 
-        <button id="btn-submit" type="submit"> Conferma registrazione</button>
-    </form>
+<%--        <div class="mb-3" id="registrationPassword">--%>
+<%--        <label for="password">Password:</label><br>--%>
+<%--        <input type="password" id="password" name="password"><br>--%>
+<%--        </div>--%>
+
+<%--        <label for="confirmpassword">Conferma password:</label><br>--%>
+<%--        <input type="password" id="confirmpassword" name="confirmpassword"><br>--%>
+
+<%--        <button id="btn-submit" type="submit"> Conferma registrazione</button>--%>
+<%--    </form>--%>
 
 </section>
 </body>
 <script>
 
+    $(document).ready(function() {
+        // Aggiungi un gestore di eventi al bottone di reset
+        $("#resetButton").click(function() {
+            // Seleziona l'input e reimposta il suo valore a vuoto
+            $("#nome").val('');
+            $("#cognome").val('');
+            $("#email").val('');
+            $("#password").val('');
+            $("#confirmpassword").val('');
+        });
+    });
 
     function _validate() {
 
@@ -122,7 +224,7 @@
     function sendData(){
 
         $("#form").submit(function(event) {
-            console.log("sus? ");
+
             event.preventDefault();
 
             let validation = _validate();

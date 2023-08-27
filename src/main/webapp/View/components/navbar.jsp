@@ -114,9 +114,25 @@
 
 
 
-
-
-
+<%--<%--%>
+<%--    session = request.getSession(false);--%>
+<%--    String tipoutente = session.getAttribute("userType").toString();--%>
+<%--    if ("1".equals(tipoutente)) { %>--%>
+<%--        <a href="/PayPol/View/HPUser.jsp" id="iconLink">--%>
+<%--            <i class="bi bi-house-door"></i> <%--%>
+<%--    } else if("2".equals(tipoutente)) { %>--%>
+<%--        <a href="/PayPol/View/HPSeller.jsp" id="iconLink">--%>
+<%--            <i class="bi bi-house-door"></i> <%--%>
+<%--    } else if("3".equals(tipoutente)){--%>
+<%--        %>--%>
+<%--            <a href="/PayPol/View/HPAdmin.jsp" id="iconLink">--%>
+<%--                <i class="bi bi-house-door"></i> <%--%>
+<%--    } else if(session.getAttribute("currentSessionUser") == null){--%>
+<%--        %>--%>
+<%--                <a href="/PayPol" id="iconLink">--%>
+<%--                    <i class="bi bi-house-door"></i> <%--%>
+<%--    }--%>
+<%--%>--%>
 
 <nav class="navbar navbar-expand-lg bg-light">
   <div class="container-fluid">
@@ -124,8 +140,9 @@
       <img src="${pageContext.request.contextPath}/View/img/testlogo.svg" alt="PayPol" width="170" height="50">
     </a>
     <div class="d-flex alight-items-center">
-      <a href="/PayPol"> <i class="bi bi-house-door"></i> </a>
-
+        <a href="#" id="iconLink">
+            <i class="bi bi-house-door"></i>
+        </a>
     </div>
     <div class="d-flex align-items-center m-lg-3">
     <div class="links" id="navbarNav">
@@ -143,4 +160,7 @@
     </div>
   </div>
 </nav>
+
+
+
 </html>

@@ -110,9 +110,13 @@ public class AuthenticationManager extends HttpServlet {
         if(utente.getNome()!=null){
 
             //generiamo la sessione
+
+
+
             HttpSession session = request.getSession(true);
             session.setMaxInactiveInterval(60*15);
             session.setAttribute("currentSessionUser", utente);
+
 
             Jlocation.put("success", true);
             Jlocation.put("message", "Login effettuato con successo");

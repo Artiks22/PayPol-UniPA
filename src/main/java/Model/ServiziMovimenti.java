@@ -46,6 +46,11 @@ public class ServiziMovimenti
         query.setInt(1,idOwner);
         ResultSet resultSet = query.executeQuery();
 
+        if(!resultSet.next()) {
+            movimenti = null;
+            return movimenti;
+        }
+
         while(resultSet.next()){
 
             Movimenti movimento = new Movimenti();

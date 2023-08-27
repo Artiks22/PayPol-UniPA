@@ -175,6 +175,7 @@
                     </tbody>
                 </table>
                 </div>
+
             </div>
 
             <!-- Modal footer -->
@@ -254,6 +255,7 @@
 
                 } else {
                     // Se success è false, aggiungi un messaggio di errore
+
                     var htmlToInsert = `
                           <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <strong>Operazione Fallita!</strong>   ` + response.message +
@@ -270,39 +272,47 @@
         });
 
 
-            $("#bottoneGenerazione").click(function() {
-                $("#bottoneGenerazione").prop("disabled", true);
-            $.ajax({
-                url: '${pageContext.request.contextPath}/AdminUserManager/getMovements',
-                method: "GET",
-                dataType: "json",
-                success: function(response) {
-                    if (response.success) {
-                        var movements = response.movements;
-                        var tableBody = $("#transactionHistoryTable tbody");
+    $("#bottoneGenerazione").click(function() {
+        $("#bottoneGenerazione").prop("disabled", true);
+    $.ajax({
+        url: '${pageContext.request.contextPath}/AdminUserManager/getMovements',
+        method: "GET",
+        dataType: "json",
+        success: function(response) {
+            if (response.success) {
+                var movements = response.movements;
+                var tableBody = $("#transactionHistoryTable tbody");
 
-                        // Itera attraverso i movimenti e crea le righe della tabella
-                        $.each(movements, function(index, movement) {
-                            var row = $("<tr>");
-                            row.append($("<td>").text(movement.idMovimento));
-                            row.append($("<td>").text(movement.dataMovimento));
-                            row.append($("<td>").text(movement.cartaRicevente));
-                            row.append($("<td>").text(movement.importo));
-                            tableBody.append(row);
-                        });
+                // Itera attraverso i movimenti e crea le righe della tabella
+                $.each(movements, function(index, movement) {
+                    var row = $("<tr>");
+                    row.append($("<td>").text(movement.idMovimento));
+                    row.append($("<td>").text(movement.dataMovimento));
+                    row.append($("<td>").text(movement.cartaRicevente));
+                    row.append($("<td>").text(movement.importo));
+                    tableBody.append(row);
+                });
 
 
-                    } else {
-                        console.log("Errore nella risposta del server");
-                        $("#bottoneGenerazione").prop("disabled", false);
-                    }
-                },
-                error: function() {
-                    console.log("Errore nella richiesta AJAX");
-                    $("#bottoneGenerazione").prop("disabled", false);
-                }
-            });
-        });
+            } else {
+                $("#modal2").modal("hide");
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+                var htmlToInsert = `
+                          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Operazione Fallita!</strong>   ` + response.message +
+                    `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>`;
+                $("#responseDiv").html(htmlToInsert);
+                $("#bottoneGenerazione").prop("disabled", false);
+            }
+        },
+        error: function() {
+            console.log("Errore nella richiesta AJAX");
+            $("#bottoneGenerazione").prop("disabled", false);
+        }
+    });
+});
 
 
 

@@ -3,22 +3,25 @@
 <html>
 <head>
   <title>JSP - Hello World</title>
-
-<%--  Boostrap components --%>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <%--  Boostrap components --%>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
-
-<%--  Jquery--%>
+  <%--  Jquery--%>
   <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+  <script src="https://malsup.github.io/jquery.form.js"></script>
 
 </head>
 <body>
 
 <div class="pb-4">
-  <jsp:include page="/View/components/navbar.jsp"></jsp:include>
+  <% session = request.getSession(false);
+  if (session.getAttribute("currentSessionUser") != null) {
+  %>
+  <jsp:include page="/View/components/navbarlogged.jsp"></jsp:include> <% } else { %>
+  <jsp:include page="/View/components/navbar.jsp"></jsp:include> <% } %>
 </div>
 
 <!-- Carousel wrapper -->

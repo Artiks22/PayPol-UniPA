@@ -34,26 +34,6 @@
         <%--DIV CONTENTENTE L'ALERT RIGUARDANTE L'OPERAZIONE RIUSCITA CON SUCCESSO O MENO--%>
         <div id="responseDiv"></div>
 
-        <%--ADDEBITO O ACCREDITO FUNCTION--%>
-        <div class="col-lg-3 col-md-12 mb-4  mx-auto">
-            <div class="card">
-                <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-                    <img src="img/addebitoaccredito.jpg" class="img-fluid" />
-                    <a href="#!">
-                        <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
-                    </a>
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">Accredito / Addebito Carta</h5>
-                    <p class="card-text">
-                        Effettuare accredito o addebito su carta di credito.
-                    </p>
-                    <button type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" data-bs-toggle="modal" data-bs-target="#modal1">
-                        Vai
-                    </button>
-                </div>
-            </div>
-        </div>
         <%--GENERAZIONE REPORT CON LE OPERAZIONI FATTE--%>
         <div class="col-lg-3 col-md-6 mb-4 mx-auto">
             <div class="card">
@@ -98,10 +78,176 @@
     </div>
 </section>
 
+<!-- MODAL NUMERO 2 -- GENERAZIONE REPORT CARTA  -->
+<div class="modal fade" id="modal2">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Genera Report Transazioni Carte</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <%--                <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545">Genera PDF</button>--%>
+                    <button id="bottoneGenerazione" type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" >Genera Report</button>
+
+                    <div id="transactionHistoryDiv">
+                        <table id="transactionHistoryTable" class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th scope="col">ID Movimento</th>
+                                <th scope="col">Data Movimento</th>
+                                <th scope="col">Carta Ricevente</th>
+                                <th scope="col">Importo</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545" data-bs-dismiss="modal" onclick="resetFunction()">Chiudi</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+<!-- MODAL NUMERO 3 -- CONTROLLO CREDITO RESIDUO -->
+<div class="modal fade" id="modal3">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Controllo credito residuo</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal body -->
+            <div id="divBalance" class="modal-body">
+                <form id="formCheckBalance" action="${pageContext.request.contextPath}/CardManager/checkBalance" method="GET" class="form-container">
+                    <label for="checkCredito">Numero Carta:</label><br>
+                    <input type="text" placeholder="Inserire Num. Carta" id="checkCredito" name="CardCredit"><br><br>
+                    <button id="checkBalanceButton" class="btn btn-primary" type="submit"> Effettua Operazione</button>
+                </form>
+                <br>
+                <div id="balanceResult"></div>
+
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545" data-bs-dismiss="modal" onclick="chiudiFunction()">Chiudi</button>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 
-</body>
+    </body>
 <script>
+
+    $('#modal2').on('shown.bs.modal', function () {
+        $('#myInput').trigger('focus')
+    })
+    $('#modal3').on('shown.bs.modal', function () {
+        $('#myInput').trigger('focus')
+    })
+
+
+    $("#bottoneGenerazione").click(function() {
+        $("#bottoneGenerazione").prop("disabled", true);
+        $.ajax({
+            url: '${pageContext.request.contextPath}/AdminUserManager/getMovements',
+            method: "GET",
+            dataType: "json",
+            success: function(response) {
+                if (response.success) {
+                    var movements = response.movements;
+                    var tableBody = $("#transactionHistoryTable tbody");
+
+                    // Itera attraverso i movimenti e crea le righe della tabella
+                    $.each(movements, function(index, movement) {
+                        var row = $("<tr>");
+                        row.append($("<td>").text(movement.idMovimento));
+                        row.append($("<td>").text(movement.dataMovimento));
+                        row.append($("<td>").text(movement.cartaRicevente));
+                        row.append($("<td>").text(movement.importo));
+                        tableBody.append(row);
+                    });
+
+
+                } else {
+                    $("#modal2").modal("hide");
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                    var htmlToInsert = `
+                          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Operazione Fallita!</strong>   ` + response.message +
+                        `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>`;
+                    $("#responseDiv").html(htmlToInsert);
+                    $("#bottoneGenerazione").prop("disabled", false);
+                }
+            },
+            error: function() {
+                console.log("Errore nella richiesta AJAX");
+                $("#bottoneGenerazione").prop("disabled", false);
+            }
+        });
+    });
+
+    $('#formCheckBalance')
+        .ajaxForm({
+            url : '${pageContext.request.contextPath}/CardManager/checkBalance', // or whatever
+            dataType : 'json',
+            success : function (response) {
+
+                if (response.success) {
+
+                    var htmlToInsert = `
+                          <div class="alert alert-primary alert-dismissible fade show" role="alert"> ` + response.message + `<strong>` + response.value +
+                        `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>`;
+                    $("#balanceResult").html(htmlToInsert);
+
+                } else {
+                    // Se success è false, aggiungi un messaggio di errore
+                    $("#modal3").modal("hide");
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+
+                    var htmlToInsert = `
+                          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Operazione Fallita!</strong>   ` + response.message +
+                        `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>`;
+                    $("#responseDiv").html(htmlToInsert);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log("Errore nella richiesta AJAX: " + error);
+            }
+
+
+        });
+
+    function chiudiFunction() {
+        $('#balanceResult').empty()
+    }
+    function resetFunction() {
+        $("#bottoneGenerazione").prop("disabled", false);
+        $("#transactionHistoryTable tbody").empty()
+    }
 
 </script>
 </html>
