@@ -149,7 +149,7 @@ public class CardManager extends HttpServlet {
         }
         if (isBlocked) {
             JObj.put("failed", false);
-            JObj.put("message", "Attenzione! La carta risulta essere bloccata e non è possibile effettuare l'operazione!");
+            JObj.put("message", "La carta risulta essere bloccata e non è possibile effettuare l'operazione!");
             String obj = JObj.toString();
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
@@ -165,7 +165,7 @@ public class CardManager extends HttpServlet {
             }
             if (!sceltamov && creditoAttuale < value) {
                 JObj.put("failed", false);
-                JObj.put("message", "Attenzione! Il valore inserito e' superiore al credito presente sul conto");
+                JObj.put("message", "Il valore inserito e' superiore al credito presente sul conto");
                 String obj = JObj.toString();
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
@@ -184,7 +184,7 @@ public class CardManager extends HttpServlet {
 
 
                 JObj.put("success", true);
-                JObj.put("message", "Operazione di accredito eseguita con successo, nuovo credito:");
+                JObj.put("message", "Addebito Eseguito, nuovo credito:");
                 JObj.put("value", creditoaggiornato + "$");
                 String obj = JObj.toString();
                 response.setContentType("application/json");
@@ -203,7 +203,7 @@ public class CardManager extends HttpServlet {
 
 
                 JObj.put("success", true);
-                JObj.put("message", "Operazione di addebito eseguita con successo, nuovo credito:");
+                JObj.put("message", "Accredito eseguito, nuovo credito:");
                 JObj.put("value", creditoaggiornato + "$");
                 String obj = JObj.toString();
                 response.setContentType("application/json");

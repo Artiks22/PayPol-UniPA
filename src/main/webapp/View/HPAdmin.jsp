@@ -122,7 +122,7 @@
                     <input type="text" name="email" id="email"><br>
                     <label for="valore">Inserire credito iniziale carta:</label><br>
                     <input type="text" name="valore" id="valore"><br><br>
-                    <button id="createCardButton" class="btn btn-primary" type="submit" > Crea carta</button>
+                    <button id="createCardButton" class="btn btn-primary" type="submit" data-bs-dismiss="modal" > Crea carta</button>
                 </form>
             </div>
 
@@ -158,7 +158,7 @@
                         <option value="Blocca">
                         <option value="Sblocca">
                     </datalist>
-                    <button id="blockUnblockButton" class="btn btn-primary" type="submit"> Effettua Operazione</button>
+                    <button id="blockUnblockButton" class="btn btn-primary" type="submit" data-bs-dismiss="modal"> Effettua Operazione</button>
                 </form>
             </div>
 
@@ -187,7 +187,7 @@
                 <form id="formCheckBalance" action="${pageContext.request.contextPath}/CardManager/checkBalance" method="GET" class="form-container">
                     <label for="checkCredito">Numero Carta:</label><br>
                     <input type="text" placeholder="Inserire Num. Carta" id="checkCredito" name="CardCredit"><br><br>
-                    <button id="checkBalanceButton" class="btn btn-primary" type="submit"> Effettua Operazione</button>
+                    <button id="checkBalanceButton" class="btn btn-primary" type="submit" > Effettua Operazione</button>
                 </form>
                 <br>
                 <div id="balanceResult"></div>
@@ -317,36 +317,38 @@
 
         });
 
+    //NON PIÙ NECESSARI, SOLUZIONE ALTERNATIVA
+    // $(document).ready(function() {
+    //     $("#formCreazione").submit(function(event) {
+    //         // Prevent default form submission
+    //         event.preventDefault();
+    //
+    //
+    //         // chiudo modal dopo il submit
+    //         $("#modal1").modal("hide");
+    //         $('body').removeClass('modal-open');
+    //         $('.modal-backdrop').remove();
+    //     });
+    // });
 
-    $(document).ready(function() {
-        $("#formCreazione").submit(function(event) {
-            // Prevent default form submission
-            event.preventDefault();
-
-
-            // chiudo modal dopo il submit
-            $("#modal1").modal("hide");
-            $('body').removeClass('modal-open');
-            $('.modal-backdrop').remove();
-        });
-    });
-
-    $(document).ready(function() {
-        $("#formUpdateStatus").submit(function(event) {
-            // Prevent default form submission
-            event.preventDefault();
-
-            // chiudo modal dopo il submit
-            $("#modal2").modal("hide");
-            $('body').removeClass('modal-open');
-            $('.modal-backdrop').remove();
-        });
-    });
+    // $(document).ready(function() {
+    //     $("#formUpdateStatus").submit(function(event) {
+    //         // Prevent default form submission
+    //         event.preventDefault();
+    //
+    //         // chiudo modal dopo il submit
+    //         $("#modal2").modal("hide");
+    //         $('body').removeClass('modal-open');
+    //         $('.modal-backdrop').remove();
+    //     });
+    // });
 
 
     function chiudiFunction() {
         $('#balanceResult').empty()
     }
+
+
 
 
 
