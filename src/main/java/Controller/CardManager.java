@@ -195,7 +195,7 @@ public class CardManager extends HttpServlet {
                 try {
                     LocalDate dataoggi = LocalDate.now();
                     creditoaggiornato = ServiziCarta.updateBalance(numCarta, value, sceltamov);
-                    inseritoMovimento = ServiziMovimenti.creaMovimenti(Date.valueOf(dataoggi),value,numCarta);
+                    inseritoMovimento = ServiziMovimenti.creaMovimenti(Date.valueOf(dataoggi),+value,numCarta);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }

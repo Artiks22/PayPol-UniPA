@@ -97,7 +97,7 @@
             success : function (response) {
 
               if (response.success) {
-                console.log(response);
+                // console.log(response);
                 redirectFunction(response.UserType);
 <%--                <% Utente  currentUser = (Utente) session.getAttribute("currentSessionUser"); %>--%>
 <%--                let userType =  <% currentUser.getUserType(); %>--%>

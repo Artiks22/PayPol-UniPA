@@ -72,7 +72,7 @@
             <li class="list-group-item"><strong>Admin:</strong><br>
               Creare una nuova carta <i class="bi bi-check2"></i><br>
               Bloccare/sbloccare una carta noto il numero <i class="bi bi-check2"></i><br>
-            <i>Registrare/Disabilitare negozianti </i><br>
+            <i>Registrare/Disabilitare negozianti </i><i class="bi bi-check2"></i><br>
               <i>Generare report in base a diversi criteri </i><br>
               <i>Abilitare/Disabilitare negozianti <i class="bi bi-check2"></i></i>
             </li>

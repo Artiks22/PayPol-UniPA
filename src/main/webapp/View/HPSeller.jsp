@@ -72,7 +72,7 @@
                     <p class="card-text">
                         Genera un report delle operazioni contenente accrediti e addebiti delle proprie carte.
                     </p>
-                    <button type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" data-bs-toggle="modal" data-bs-target="#modal2">
+                    <button id="bottoneGenerazione" type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" data-bs-toggle="modal" data-bs-target="#modal2">
                         Vai
                     </button>
                 </div>
@@ -101,7 +101,6 @@
         </div>
     </div>
 </section>
-
 
 
 <!-- MODAL NUMERO 1 -- ADDEBITO O ACCREDITO  -->
@@ -143,7 +142,7 @@
         </div>
     </div>
 </div>
-<%--FINIRE QUESTA FUNZIONALITÀ --%>
+
 <!-- MODAL NUMERO 2 -- GENERAZIONE REPORT CARTA  -->
 <div class="modal fade" id="modal2">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -158,7 +157,7 @@
             <!-- Modal body -->
             <div class="modal-body">
 <%--                <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545">Genera PDF</button>--%>
-                <button id="bottoneGenerazione" type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" >Genera Report</button>
+<%--                <button id="bottoneGenerazione" type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" >Genera Report</button>--%>
 
                 <div id="transactionHistoryDiv">
                     <table id="transactionHistoryTable" class="table table-hover">
@@ -186,8 +185,6 @@
         </div>
     </div>
 </div>
-
-
 
 
 
@@ -222,8 +219,6 @@
         </div>
     </div>
 </div>
-
-
 
 
 </body>
@@ -315,7 +310,6 @@
 });
 
 
-
     $('#formCheckBalance')
         .ajaxForm({
             url : '${pageContext.request.contextPath}/CardManager/checkBalance', // or whatever
@@ -359,36 +353,6 @@
         $("#bottoneGenerazione").prop("disabled", false);
         $("#transactionHistoryTable tbody").empty()
     }
-    //deprecate non mi servivano più.
-    // $(document).ready(function() {
-    //     $("#formCreazione").submit(function(event) {
-    //         // Prevent default form submission
-    //         event.preventDefault();
-    //
-    //
-    //         // chiudo modal dopo il submit
-    //         $("#modal1").modal("hide");
-    //         $('body').removeClass('modal-open');
-    //         $('.modal-backdrop').remove();
-    //     });
-    // });
-
-    // $(document).ready(function() {
-    //     $("#formUpdateStatus").submit(function(event) {
-    //         // Prevent default form submission
-    //         event.preventDefault();
-    //
-    //         // chiudo modal dopo il submit
-    //         $("#modal2").modal("hide");
-    //         $('body').removeClass('modal-open');
-    //         $('.modal-backdrop').remove();
-    //     });
-    // });
-
-
-
-
-
 
 </script>
 </html>

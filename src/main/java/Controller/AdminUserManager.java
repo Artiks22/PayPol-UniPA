@@ -28,7 +28,7 @@ public class AdminUserManager extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
 
-        String emailseller = request.getParameter("email");
+        String emailseller = request.getParameter("emailSeller");
         String operazione= request.getParameter("movimento");
         boolean statoSeller;
         boolean userExists;
@@ -48,9 +48,11 @@ public class AdminUserManager extends HttpServlet {
         }
 
         if(!userExists) {
+            JObj.put("success", false);
             JObj.put("message", "Il negoziante non risulta presente nel database!");
-            response.setContentType("application/json");
+
             String location = JObj.toString();
+            response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(location);
         } else {
@@ -63,12 +65,14 @@ public class AdminUserManager extends HttpServlet {
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
+                    JObj.put("success", true);
                     JObj.put("message", "Il negoziante è stato bloccato con successo!");
                     response.setContentType("application/json");
                     String location = JObj.toString();
                     response.setCharacterEncoding("UTF-8");
                     response.getWriter().write(location);
                 } else if (statoSeller) {
+                    JObj.put("success", false);
                     JObj.put("message", "Il negoziante risulta già essere Bloccato!");
                     response.setContentType("application/json");
                     String location = JObj.toString();
@@ -84,13 +88,15 @@ public class AdminUserManager extends HttpServlet {
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
-                    JObj.put("message", "Il negoziante è stato bloccato con successo!");
+                    JObj.put("success", true);
+                    JObj.put("message", "Il negoziante è stato sbloccato con successo!");
                     response.setContentType("application/json");
                     String location = JObj.toString();
                     response.setCharacterEncoding("UTF-8");
                     response.getWriter().write(location);
                 } else if (!statoSeller) {
-                    JObj.put("message", "Il negoziante risulta già non essere bloccato!");
+                    JObj.put("success", false);
+                    JObj.put("message", "Il negoziante risulta già NON essere bloccato!");
                     response.setContentType("application/json");
                     String location = JObj.toString();
                     response.setCharacterEncoding("UTF-8");

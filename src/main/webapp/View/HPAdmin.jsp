@@ -79,6 +79,27 @@
             </div>
         </div>
 
+    <%--BLOCCARE/SBLOCCARE SELLER FUNCTIONALITY--%>
+    <div class="col-lg-3 col-md-6 mb-4 mx-auto">
+        <div class="card">
+            <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                <img src="img/card%20bloccasbloccamerch.jpg" class="img-fluid" />
+                <a href="#!">
+                    <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                </a>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Gestione Venditori</h5>
+                <p class="card-text">
+                    Sblocca o Blocca una dato Venditore.
+                </p>
+                <button type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" data-bs-toggle="modal" data-bs-target="#modal4">
+                    Vai
+                </button>
+            </div>
+        </div>
+    </div>
+
             <%--CHECK BALANCE FUNCTIONALITY--%>
         <div class="col-lg-3 col-md-6 mb-4 mx-auto">
             <div class="card">
@@ -203,7 +224,41 @@
     </div>
 </div>
 
+<!-- MODAL NUMERO 4 -- BLOCCO SBLOCCO VENDITORI -->
+<div class="modal fade" id="modal4">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
 
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Creazione Carta di Credito</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form id="formUpdateStatusMerch" action="${pageContext.request.contextPath}/AdminUserManager/modifyStatus" method="POST">
+                    <label for="emailSeller">Inserisci Email Venditore:</label><br>
+                    <input type="text" id="emailSeller" name="emailSeller"><br>
+                    <label for="movimento">Operazione:</label><br>
+                    <%--                    <input list="operation" name="movimento" id="movimento">--%>
+                    <input class="form-control" list="operation" id="movimento" name="movimento" placeholder="Scegli operazione fra Blocco o Sblocco"><br>
+                    <datalist id="operation">
+                        <option value="Blocca">
+                        <option value="Sblocca">
+                    </datalist>
+                    <button id="blockUnblockButton" class="btn btn-primary" type="submit" data-bs-dismiss="modal"> Effettua Operazione</button>
+                </form>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545" data-bs-dismiss="modal">Chiudi</button>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 
 </body>
@@ -215,6 +270,9 @@
         $('#myInput').trigger('focus')
     })
     $('#modal3').on('shown.bs.modal', function () {
+        $('#myInput').trigger('focus')
+    })
+    $('#modal4').on('shown.bs.modal', function () {
         $('#myInput').trigger('focus')
     })
 
@@ -302,6 +360,38 @@
                     $('body').removeClass('modal-open');
                     $('.modal-backdrop').remove();
 
+                    var htmlToInsert = `
+                          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Operazione Fallita!</strong>   ` + response.message +
+                        `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>`;
+                    $("#responseDiv").html(htmlToInsert);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log("Errore nella richiesta AJAX: " + error);
+            }
+
+
+        });
+
+    $('#formUpdateStatusMerch')
+        .ajaxForm({
+            url : '${pageContext.request.contextPath}/AdminUserManager/modifyStatus', // or whatever
+            dataType : 'json',
+            success : function (response) {
+
+                if (response.success) {
+                    // Se success è true, inserisci l'alert all'interno del messaggio.
+                    var htmlToInsert = `
+                          <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Operazione Eseguita con successo!</strong>   ` + response.message +
+                        `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>`;
+                    $("#responseDiv").html(htmlToInsert);
+
+                } else {
+                    // Se success è false, aggiungi un messaggio di errore
                     var htmlToInsert = `
                           <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <strong>Operazione Fallita!</strong>   ` + response.message +
