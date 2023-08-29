@@ -25,7 +25,7 @@
 </head>
 <body>
 
-<div class="pb-4">
+<div class="">
     <jsp:include page="/View/components/navbar.jsp"></jsp:include>
 </div>
 

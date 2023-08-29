@@ -98,6 +98,7 @@ public class AuthenticationManager extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
+
         PasswordEncryption passwordEncryption = new PasswordEncryption();
         String encryptedPassword = passwordEncryption.cypher(password);
         Utente utente = new Utente();
@@ -112,36 +113,40 @@ public class AuthenticationManager extends HttpServlet {
             //generiamo la sessione
 
 
-
+            int userType = utente.getUserType();
             HttpSession session = request.getSession(true);
             session.setMaxInactiveInterval(60*15);
             session.setAttribute("currentSessionUser", utente);
+            session.setAttribute("userType", userType);
 
 
             Jlocation.put("success", true);
             Jlocation.put("message", "Login effettuato con successo");
+            Jlocation.put("UserType", utente.getUserType());
             String location = Jlocation.toString();
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(location);
 
-            switch(utente.getUserType()){
-                case 1:
-                    response.sendRedirect("/PayPol/View/HPUser.jsp");
-                    break;
 
-                case 2:
-                    response.sendRedirect("/PayPol/View/HPSeller.jsp");
-                    break;
 
-                case 3:
-                    response.sendRedirect("/PayPol/View/HPAdmin.jsp");
-                    break;
-
-                default:
-                    response.sendRedirect("/PayPol/index.jsp");
-
-            }
+//            switch(utente.getUserType()){
+//                case 1:
+//                    response.sendRedirect("/PayPol/View/HPUser.jsp");
+//                    break;
+//
+//                case 2:
+//                    response.sendRedirect("/PayPol/View/HPSeller.jsp");
+//                    break;
+//
+//                case 3:
+//                    response.sendRedirect("/PayPol/View/HPAdmin.jsp");
+//                    break;
+//
+//                default:
+//                    response.sendRedirect("/PayPol/index.jsp");
+//
+//            }
         }
         else{
 
@@ -163,7 +168,9 @@ public class AuthenticationManager extends HttpServlet {
 
         ConnectionDB connectionDB = new ConnectionDB();
         HttpSession session = request.getSession(false);
+        System.out.println("invalidata sessione con ID:" + session.getId());
         session.invalidate();
+
         //request.getRequestDispatcher("/index.jsp").forward(request, response);
         response.sendRedirect("/PayPol/index.jsp");
         }

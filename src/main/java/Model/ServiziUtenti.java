@@ -125,7 +125,7 @@ public class ServiziUtenti {
 
             utente.setId(resultSet.getInt("idUser"));
             utente.setEmail(resultSet.getNString("Email"));
-            utente.setPassword(resultSet.getNString("Password"));
+//            utente.setPassword(resultSet.getNString("Password"));
             utente.setNome(resultSet.getNString("Nome"));
             utente.setCognome(resultSet.getNString("Cognome"));
             utente.setUserType(Integer.parseInt(resultSet.getNString("UserType")));

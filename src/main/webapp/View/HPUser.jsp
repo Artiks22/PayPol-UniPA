@@ -120,6 +120,49 @@
         </div>
     </div>
 
+
+<!-- MODAL NUMERO 3 -- CONTROLLO CREDITO RESIDUO -->
+<div class="modal fade" id="modal1">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Carte in Possesso</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <%--                <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545">Genera PDF</button>--%>
+                <button id="bottoneGenerazione" type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" >Genera Report</button>
+
+                <div id="transactionHistoryDiv">
+                    <table id="cardTables" class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">ID Movimento</th>
+                            <th scope="col">Data Movimento</th>
+                            <th scope="col">Carta Ricevente</th>
+                            <th scope="col">Importo</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545" data-bs-dismiss="modal" onclick="chiudiFunction()">Chiudi</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 <!-- MODAL NUMERO 3 -- CONTROLLO CREDITO RESIDUO -->
 <div class="modal fade" id="modal3">
     <div class="modal-dialog modal-dialog-centered" role="document">

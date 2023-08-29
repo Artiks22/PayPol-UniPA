@@ -117,27 +117,6 @@
 
 
 
-<%--    <% --%>
-<%--        Utente u = (Utente)request.getSession().getAttribute("currentSessionUser");--%>
-<%--        int userType = u.getUserType();--%>
-<%--    %>--%>
-
-<%--<%--%>
-<%--    if (userType == 1) { %>--%>
-<%--<a href="/PayPol/View/HPUser.jsp" id="iconLink">--%>
-<%--    <i class="bi bi-house-door"></i>--%>
-<%--</a>  <% } else if (userType == 2) { %>--%>
-<%--<a href="/PayPol/View/HPSeller.jsp" id="iconLink">--%>
-<%--    <i class="bi bi-house-door"></i>--%>
-<%--</a> <% } else if (userType == 3) { %>--%>
-<%--        <a href="/PayPol/View/HPAdmin.jsp" id="iconLink">--%>
-<%--    <i class="bi bi-house-door"></i>--%>
-<%--</a> <% } else {  %>--%>
-<%--<a href="/PayPol" id="iconLink">--%>
-<%--    <i class="bi bi-house-door"></i>--%>
-<%--</a> <% } %>--%>
-
-
 <nav class="navbar navbar-expand-lg bg-light">
   <div class="container-fluid">
     <a class="navbar-brand mt-2 mt-lg-0" href="/PayPol">
@@ -168,7 +147,11 @@
 
 
 
+<script>
 
+
+
+</script>
 
 
 

@@ -1,4 +1,4 @@
-<%--
+<%@ page import="Model.Utente" %><%--
   Created by IntelliJ IDEA.
   User: zarti
   Date: 01/08/2023
@@ -85,38 +85,62 @@
 </body>
 
 <script>
-  <%--$('#loginForm')--%>
-  <%--        .ajaxForm({--%>
-  <%--          url : '${pageContext.request.contextPath}/AuthenticationManager/login', // or whatever--%>
-  <%--          dataType : 'json',--%>
-  <%--          success : function (response) {--%>
-
-  <%--            if (!response.success) {--%>
-  <%--              var htmlToInsert = `--%>
-  <%--                        <div class="alert alert-danger alert-dismissible fade show" role="alert">--%>
-  <%--                          <strong>Errore!</strong>   ` + response.message +--%>
-  <%--                      `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>--%>
-  <%--                        </div>`;--%>
-
-  <%--              $("#alertDiv").html(htmlToInsert);--%>
 
 
-  <%--            } else if (response.success) {--%>
-  <%--              console.log("è entrato?");--%>
-  <%--              session = request.getSession(false);--%>
-  <%--              var userType = session.getAttribute("userType");--%>
-  <%--              if (userType = 1) {--%>
-  <%--                console.log("prova")--%>
-  <%--              } else if (userType = 2) {--%>
-  <%--                console.log("provanegoziante")--%>
-  <%--              }--%>
-  <%--            }--%>
-  <%--          },--%>
-  <%--          error: function(xhr, status, error) {--%>
-  <%--            console.log("Errore nella richiesta AJAX: " + error);--%>
-  <%--          }--%>
+  $(document).ready(()=>{
 
 
-  <%--        });--%>
+  $('#loginForm')
+          .ajaxForm({
+            url : '${pageContext.request.contextPath}/AuthenticationManager/login', // or whatever
+            dataType : 'json',
+            success : function (response) {
+
+              if (response.success) {
+                console.log(response);
+                redirectFunction(response.UserType);
+<%--                <% Utente  currentUser = (Utente) session.getAttribute("currentSessionUser"); %>--%>
+<%--                let userType =  <% currentUser.getUserType(); %>--%>
+
+
+
+              } else  {
+                var htmlToInsert = `
+                          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Errore!</strong>   ` + response.message +
+                        `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>`;
+
+                $("#alertDiv").html(htmlToInsert);
+
+
+              }
+            },
+            error: function(xhr, status, error) {
+              console.log("Errore nella richiesta AJAX: " + error);
+            }
+
+
+          });
+  });
+
+  function redirectFunction(userType){
+    console.log(userType);
+
+
+    switch (userType) {
+      case 1:
+        window.location.href = "/PayPol/View/HPUser.jsp";
+        break;
+      case 2:
+        window.location.href = "/PayPol/View/HPSeller.jsp";
+        break;
+      case 3:
+        window.location.href = "/PayPol/View/HPAdmin.jsp";
+        break;
+      default:
+        console.log("Errore login");
+    }
+  }
 </script>
 </html>
