@@ -119,26 +119,59 @@ public class AdminUserManager extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         //Chiamo la funzione per ottenere l'intera lista di movimenti
         ArrayList<Movimenti> movimenti =  serviziMovimenti.ottieniMovimenti(id);
+        ServiziUtenti serviziUtente = new ServiziUtenti();
 
-        if(movimenti!=null) {
+        if(utente.getUserType() == 2){
+            boolean statoSeller = serviziUtente.getSellerStatus(utente.getEmail());
+            if (statoSeller){
+                JObj.put("success", false);
+                JObj.put("message", "L'account dal quale cerchi di recuperare la lista transazioni risulta bloccato!");
 
-            JObj.put("success", true);
-            JObj.put("message", "movimenti ottenuti");
-            JObj.put("movements", movimenti);
+                String jobj = JObj.toString();
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(jobj);
+            }
+            else {
+                if(movimenti!=null) {
 
-            String jobj = JObj.toString();
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(jobj);
+                    JObj.put("success", true);
+                    JObj.put("message", "movimenti ottenuti");
+                    JObj.put("movements", movimenti);
+
+                    String jobj = JObj.toString();
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write(jobj);
+                } else {
+                    JObj.put("success", false);
+                    JObj.put("message", "Non sono presenti movimenti");
+                    String location = JObj.toString();
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write(location);
+                }
+            }
         } else {
-            JObj.put("success", false);
-            JObj.put("message", "Non sono presenti movimenti");
-            String location = JObj.toString();
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(location);
-        }
+            if(movimenti!=null) {
 
+                JObj.put("success", true);
+                JObj.put("message", "movimenti ottenuti");
+                JObj.put("movements", movimenti);
+
+                String jobj = JObj.toString();
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(jobj);
+            } else {
+                JObj.put("success", false);
+                JObj.put("message", "Non sono presenti movimenti");
+                String location = JObj.toString();
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(location);
+            }
+        }
     }
 
 

@@ -48,7 +48,7 @@
                     <p class="card-text">
                         Genera un report delle operazioni contenente accrediti e addebiti delle proprie carte.
                     </p>
-                    <button type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" data-bs-toggle="modal" data-bs-target="#modal2">
+                    <button id="bottoneGenerazione" type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" data-bs-toggle="modal" data-bs-target="#modal1">
                         Vai
                     </button>
                 </div>
@@ -69,7 +69,7 @@
                     <p class="card-text">
                         Controlla credito residuo su Carta di Credito
                     </p>
-                    <button type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" data-bs-toggle="modal" data-bs-target="#modal3">
+                    <button type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" data-bs-toggle="modal" data-bs-target="#modal2">
                         Vai
                     </button>
                 </div>
@@ -78,8 +78,8 @@
     </div>
 </section>
 
-<!-- MODAL NUMERO 2 -- GENERAZIONE REPORT CARTA  -->
-<div class="modal fade" id="modal2">
+<!-- MODAL NUMERO 1 -- GENERAZIONE REPORT CARTA  -->
+<div class="modal fade" id="modal1">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
 
@@ -92,7 +92,7 @@
                 <!-- Modal body -->
                 <div class="modal-body">
                     <%--                <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545">Genera PDF</button>--%>
-                    <button id="bottoneGenerazione" type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" >Genera Report</button>
+<%--                    <button id="bottoneGenerazione" type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" >Genera Report</button>--%>
 
                     <div id="transactionHistoryDiv">
                         <table id="transactionHistoryTable" class="table table-hover">
@@ -121,50 +121,8 @@
     </div>
 
 
-<!-- MODAL NUMERO 3 -- CONTROLLO CREDITO RESIDUO -->
-<div class="modal fade" id="modal1">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Carte in Possesso</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-                <%--                <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545">Genera PDF</button>--%>
-                <button id="bottoneGenerazione" type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" >Genera Report</button>
-
-                <div id="transactionHistoryDiv">
-                    <table id="cardTables" class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th scope="col">ID Movimento</th>
-                            <th scope="col">Data Movimento</th>
-                            <th scope="col">Carta Ricevente</th>
-                            <th scope="col">Importo</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Modal footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545" data-bs-dismiss="modal" onclick="chiudiFunction()">Chiudi</button>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-<!-- MODAL NUMERO 3 -- CONTROLLO CREDITO RESIDUO -->
-<div class="modal fade" id="modal3">
+<!-- MODAL NUMERO 2 -- CONTROLLO CREDITO RESIDUO -->
+<div class="modal fade" id="modal2">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
 
@@ -199,16 +157,15 @@
     </body>
 <script>
 
-    $('#modal2').on('shown.bs.modal', function () {
+    $('#modal1').on('shown.bs.modal', function () {
         $('#myInput').trigger('focus')
     })
-    $('#modal3').on('shown.bs.modal', function () {
+    $('#modal2').on('shown.bs.modal', function () {
         $('#myInput').trigger('focus')
     })
 
 
     $("#bottoneGenerazione").click(function() {
-        $("#bottoneGenerazione").prop("disabled", true);
         $.ajax({
             url: '${pageContext.request.contextPath}/AdminUserManager/getMovements',
             method: "GET",
@@ -230,7 +187,7 @@
 
 
                 } else {
-                    $("#modal2").modal("hide");
+                    $("#modal1").modal("hide");
                     $('body').removeClass('modal-open');
                     $('.modal-backdrop').remove();
                     var htmlToInsert = `
@@ -239,12 +196,10 @@
                         `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                           </div>`;
                     $("#responseDiv").html(htmlToInsert);
-                    $("#bottoneGenerazione").prop("disabled", false);
                 }
             },
             error: function() {
                 console.log("Errore nella richiesta AJAX");
-                $("#bottoneGenerazione").prop("disabled", false);
             }
         });
     });
@@ -265,7 +220,7 @@
 
                 } else {
                     // Se success è false, aggiungi un messaggio di errore
-                    $("#modal3").modal("hide");
+                    $("#modal2").modal("hide");
                     $('body').removeClass('modal-open');
                     $('.modal-backdrop').remove();
 
@@ -288,7 +243,6 @@
         $('#balanceResult').empty()
     }
     function resetFunction() {
-        $("#bottoneGenerazione").prop("disabled", false);
         $("#transactionHistoryTable tbody").empty()
     }
 

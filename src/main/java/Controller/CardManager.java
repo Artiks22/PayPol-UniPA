@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import Model.ServiziCarta;
 import Model.ServiziMovimenti;
 import Model.ServiziUtenti;
+import Model.Utente;
 import Utils.CardGenUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
@@ -25,6 +26,10 @@ import org.json.JSONObject;
 public class CardManager extends HttpServlet {
 
     public void checkBalance(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, SQLException {
+
+        HttpSession session = request.getSession(false);
+        Utente utente = (Utente) session.getAttribute("currentSessionUser");
+        ServiziUtenti serviziUtente = new ServiziUtenti();
         ServiziCarta serviziCarta = new ServiziCarta();
 
         JSONObject JObj = new JSONObject();
@@ -33,45 +38,58 @@ public class CardManager extends HttpServlet {
         String balance = null;
         boolean isBlocked;
 
-        try {
-            isBlocked = ServiziCarta.getCardStatus(numCarta);
-        } catch (
-        SQLException e) {
-            throw new RuntimeException(e);
-        }
-        if (isBlocked) {
-            JObj.put("failed", false);
-            JObj.put("message", "Attenzione! La carta risulta essere bloccata e non è possibile effettuare l'operazione!");
-            String obj = JObj.toString();
+
+        boolean statoSeller = serviziUtente.getSellerStatus(utente.getEmail());
+        if (statoSeller) {
+            JObj.put("success", false);
+            JObj.put("message", "L'account dal quale cerchi di effettuare i movimenti risulta bloccato!");
+
+            String jobj = JObj.toString();
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(obj);
+            response.getWriter().write(jobj);
         } else {
 
             try {
-                balance = serviziCarta.checkCredito(numCarta);
-            } catch (SQLException e) {
-                e.printStackTrace();
+                isBlocked = ServiziCarta.getCardStatus(numCarta);
+            } catch (
+                    SQLException e) {
+                throw new RuntimeException(e);
             }
-            if (balance == null) {
+            if (isBlocked) {
                 JObj.put("failed", false);
-                JObj.put("message", "Attenzione! Il numero di carta inserito non è esistente!");
+                JObj.put("message", "Attenzione! La carta risulta essere bloccata e non è possibile effettuare l'operazione!");
                 String obj = JObj.toString();
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write(obj);
             } else {
 
+                try {
+                    balance = serviziCarta.checkCredito(numCarta);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                if (balance == null) {
+                    JObj.put("failed", false);
+                    JObj.put("message", "Attenzione! Il numero di carta inserito non è esistente!");
+                    String obj = JObj.toString();
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write(obj);
+                } else {
 
-                JObj.put("success", true);
-                JObj.put("message", "Il credito residuo della carta selezionata è:  ");
-                JObj.put("value", balance + "€");
 
-                String obj = JObj.toString();
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-                response.getWriter().write(obj);
+                    JObj.put("success", true);
+                    JObj.put("message", "Il credito residuo della carta selezionata è:  ");
+                    JObj.put("value", balance + "€");
 
+                    String obj = JObj.toString();
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write(obj);
+
+                }
             }
         }
     }
@@ -127,89 +145,109 @@ public class CardManager extends HttpServlet {
 
 
     public void updateBalance(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, SQLException {
-        ServiziCarta serviziCarta = new ServiziCarta();
+
         JSONObject JObj = new JSONObject();
         request.setCharacterEncoding("UTF-8");
+        HttpSession session = request.getSession(false);
+        Utente utente = (Utente) session.getAttribute("currentSessionUser");
+        ServiziUtenti serviziUtente = new ServiziUtenti();
+        ServiziCarta serviziCarta = new ServiziCarta();
 
         String numCarta = request.getParameter("numCarta");
         String operazione = request.getParameter("sceltaMovimento");
         float value = Float.parseFloat(request.getParameter("importoMov"));
         boolean sceltamov = false;
-
         float creditoAttuale = 0;
-
 
         boolean isBlocked;
         boolean inseritoMovimento;
 
-        try {
-            isBlocked = ServiziCarta.getCardStatus(numCarta);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        if (isBlocked) {
+        if (utente.getUserType() == 2 || utente.getUserType() == 3 ) {
+            boolean statoSeller = serviziUtente.getSellerStatus(utente.getEmail());
+            if (statoSeller) {
+                JObj.put("success", false);
+                JObj.put("message", "L'account dal quale cerchi di effettuare i movimenti risulta bloccato!");
+
+                String jobj = JObj.toString();
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(jobj);
+            } else {
+                try {
+                    isBlocked = ServiziCarta.getCardStatus(numCarta);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                if (isBlocked) {
+                    JObj.put("failed", false);
+                    JObj.put("message", "La carta risulta essere bloccata e non è possibile effettuare l'operazione!");
+                    String obj = JObj.toString();
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write(obj);
+                } else {
+                    if (operazione.equals("Accredito")) {
+                        sceltamov = true;
+                    }
+                    try {
+                        creditoAttuale = Float.parseFloat(ServiziCarta.checkCredito(numCarta));
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (!sceltamov && creditoAttuale < value) {
+                        JObj.put("failed", false);
+                        JObj.put("message", "Il valore inserito e' superiore al credito presente sul conto");
+                        String obj = JObj.toString();
+                        response.setContentType("application/json");
+                        response.setCharacterEncoding("UTF-8");
+                        response.getWriter().write(obj);
+
+                    } else if (!sceltamov && creditoAttuale > value) {
+                        String creditoaggiornato;
+                        try {
+                            LocalDate dataoggi = LocalDate.now();
+                            creditoaggiornato = ServiziCarta.updateBalance(numCarta, value, sceltamov);
+                            inseritoMovimento = ServiziMovimenti.creaMovimenti(Date.valueOf(dataoggi), -value, numCarta);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+
+
+                        JObj.put("success", true);
+                        JObj.put("message", "Addebito Eseguito, nuovo credito:");
+                        JObj.put("value", creditoaggiornato + "$");
+                        String obj = JObj.toString();
+                        response.setContentType("application/json");
+                        response.setCharacterEncoding("UTF-8");
+                        response.getWriter().write(obj);
+                    } else if (sceltamov) {
+                        String creditoaggiornato;
+                        try {
+                            LocalDate dataoggi = LocalDate.now();
+                            creditoaggiornato = ServiziCarta.updateBalance(numCarta, value, sceltamov);
+                            inseritoMovimento = ServiziMovimenti.creaMovimenti(Date.valueOf(dataoggi), value, numCarta);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+
+
+                        JObj.put("success", true);
+                        JObj.put("message", "Accredito eseguito, nuovo credito:");
+                        JObj.put("value", creditoaggiornato + "$");
+                        String obj = JObj.toString();
+                        response.setContentType("application/json");
+                        response.setCharacterEncoding("UTF-8");
+                        response.getWriter().write(obj);
+                    }
+                }
+            }
+        } else {
             JObj.put("failed", false);
-            JObj.put("message", "La carta risulta essere bloccata e non è possibile effettuare l'operazione!");
+            JObj.put("message", "L'utente corrente non risulta essere un Negoziante, pertanto non può effettuare l'azione desiderata.");
             String obj = JObj.toString();
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(obj);
-        } else {
-            if (operazione.equals("Accredito")) {
-                sceltamov = true;
-            }
-            try {
-                creditoAttuale = Float.parseFloat(ServiziCarta.checkCredito(numCarta));
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            if (!sceltamov && creditoAttuale < value) {
-                JObj.put("failed", false);
-                JObj.put("message", "Il valore inserito e' superiore al credito presente sul conto");
-                String obj = JObj.toString();
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-                response.getWriter().write(obj);
-
-            } else if (!sceltamov && creditoAttuale > value) {
-                String creditoaggiornato;
-                try {
-                    LocalDate dataoggi = LocalDate.now();
-                    creditoaggiornato = ServiziCarta.updateBalance(numCarta, value, sceltamov);
-                    inseritoMovimento = ServiziMovimenti.creaMovimenti(Date.valueOf(dataoggi),-value,numCarta);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-
-
-
-                JObj.put("success", true);
-                JObj.put("message", "Addebito Eseguito, nuovo credito:");
-                JObj.put("value", creditoaggiornato + "$");
-                String obj = JObj.toString();
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-                response.getWriter().write(obj);
-            } else if (sceltamov) {
-                String creditoaggiornato;
-                try {
-                    LocalDate dataoggi = LocalDate.now();
-                    creditoaggiornato = ServiziCarta.updateBalance(numCarta, value, sceltamov);
-                    inseritoMovimento = ServiziMovimenti.creaMovimenti(Date.valueOf(dataoggi),+value,numCarta);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-
-
-
-                JObj.put("success", true);
-                JObj.put("message", "Accredito eseguito, nuovo credito:");
-                JObj.put("value", creditoaggiornato + "$");
-                String obj = JObj.toString();
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-                response.getWriter().write(obj);
-            }
         }
     }
 
