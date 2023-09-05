@@ -193,4 +193,46 @@ public class ServiziUtenti {
         query.close();
         connection.close();
     }
+
+
+    public ArrayList<Carta> ottieniCarte(int idOwner) throws SQLException {
+
+        ArrayList<Carta> carte = new ArrayList<>();
+
+        String statement = "SELECT cards.* FROM cards WHERE cards.OwnerID = ?";
+
+        ConnectionDB connessioneDB = new ConnectionDB();
+        Connection connection = connessioneDB.getConnection();
+
+        PreparedStatement query = connection.prepareStatement(statement);
+        query.setInt(1,idOwner);
+        ResultSet resultSet = query.executeQuery();
+
+        if(!resultSet.next()) {
+            carte = null;
+            return carte;
+        }
+
+        while(resultSet.next()){
+
+            Carta card = new Carta();
+
+            card.setCardNum(resultSet.getString("CardNum"));
+            card.setCreationDate(resultSet.getDate("CreatDate"));
+            card.setExpireDate(resultSet.getDate("ExpireDate"));
+            card.setCvv(resultSet.getInt("CVV"));
+
+            carte.add(card);
+
+        }
+
+        query.close();
+        resultSet.close();
+        connection.close();
+
+        return carte;
+
+
+    }
+
 }

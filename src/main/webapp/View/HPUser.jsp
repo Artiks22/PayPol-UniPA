@@ -29,7 +29,6 @@
     <h3 class="mb-5"><strong>Funzionalità Utente</strong></h3>
 
 
-
     <div class="row mt-2">
         <%--DIV CONTENTENTE L'ALERT RIGUARDANTE L'OPERAZIONE RIUSCITA CON SUCCESSO O MENO--%>
         <div id="responseDiv"></div>

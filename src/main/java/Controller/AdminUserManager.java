@@ -16,7 +16,8 @@ import org.json.JSONObject;
 
 @WebServlet(name = "AdminUserManager", urlPatterns ={"/AdminUserManager",
                                                 "/AdminUserManager/modifyStatus",
-                                                "/AdminUserManager/getMovements",})
+                                                "/AdminUserManager/getMovements",
+                                                "/AdminUserManager/getCards"})
 
 public class AdminUserManager extends HttpServlet {
 
@@ -174,6 +175,70 @@ public class AdminUserManager extends HttpServlet {
         }
     }
 
+    public void getCardsUser(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, SQLException {
+        ServiziUtenti serviziUtenti = new ServiziUtenti();
+        HttpSession session = request.getSession(false);
+        Utente utente = (Utente) session.getAttribute("currentSessionUser");
+        JSONObject JObj = new JSONObject();
+        int id  = utente.getId();
+        request.setCharacterEncoding("UTF-8");
+
+        //Chiamo la funzione per ottenere l'arraylist delle carte dell'utente.
+        ArrayList<Carta> carte =  serviziUtenti.ottieniCarte(id);
+
+        if(utente.getUserType() == 2){
+            boolean statoSeller = serviziUtenti.getSellerStatus(utente.getEmail());
+            if (statoSeller){
+                JObj.put("success", false);
+                JObj.put("message", "L'account dal quale cerchi di recuperare la lista di carte in possesso risulta bloccato!");
+
+                String jobj = JObj.toString();
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(jobj);
+            }
+            else {
+                if(carte!=null) {
+
+                    JObj.put("success", true);
+                    JObj.put("message", "carte ottenute");
+                    JObj.put("cards", carte);
+
+                    String jobj = JObj.toString();
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write(jobj);
+                } else {
+                    JObj.put("success", false);
+                    JObj.put("message", "Non sono presenti carte in possesso.");
+                    String location = JObj.toString();
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write(location);
+                }
+            }
+        } else {
+            if(carte!=null) {
+
+                JObj.put("success", true);
+                JObj.put("message", "carte ottenute");
+                JObj.put("cards", carte);
+
+                String jobj = JObj.toString();
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(jobj);
+            } else {
+                JObj.put("success", false);
+                JObj.put("message", "Non sono presenti carte in possesso.");
+                String location = JObj.toString();
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(location);
+            }
+        }
+    }
+
 
 
     @Override
@@ -191,6 +256,17 @@ public class AdminUserManager extends HttpServlet {
             }
 
             break;
+
+            case "/PayPol/AdminUserManager/getCards":
+            {
+                try {
+                    getCardsUser(request,response);
+                } catch (SQLException ex) {
+                    Logger.getLogger(AdminUserManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+                break;
+
         }
     }
 
