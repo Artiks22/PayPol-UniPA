@@ -79,6 +79,30 @@
             </div>
         </div>
 
+            <%-- CARD LISTA CARTE IN POSSESSO --%>
+            <div class="col-lg-3 col-md-6 mb-4 mx-auto">
+                <div class="card">
+                    <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                        <img src="img/Card%20List.jpg" class="img-fluid" />
+                        <a href="#!">
+                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Lista Carte in Possesso</h5>
+                        <p class="card-text">
+                            Genera la lista di carte ricaricabili in proprio possesso e le varie informazioni ad esse relative.
+                        </p>
+                        <button id="bottonecheckCarte" type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" data-bs-toggle="modal" data-bs-target="#modal3">
+                            Vai
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+
+
         <%--CHECK BALANCE FUNCTIONALITY--%>
         <div class="col-lg-3 col-md-6 mb-4 mx-auto">
             <div class="card">
@@ -93,7 +117,7 @@
                     <p class="card-text">
                         Controlla credito residuo su Carta di Credito
                     </p>
-                    <button type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" data-bs-toggle="modal" data-bs-target="#modal3">
+                    <button type="button" class="btn btn-warning"  style="--bs-btn-bg: #e0a800" data-bs-toggle="modal" data-bs-target="#modal4">
                         Vai
                     </button>
                 </div>
@@ -186,10 +210,48 @@
     </div>
 </div>
 
-
-
-<!-- MODAL NUMERO 3 -- CONTROLLO CREDITO RESIDUO -->
+<!-- MODAL NUMERO 3 -- GENERAZIONE LISTA CARTE  -->
 <div class="modal fade" id="modal3">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Lista di Carte in Possesso:</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+
+                <div id="ListaCarteDiv">
+                    <table id="CardListTable" class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">Numero Carta</th>
+                            <th scope="col">Data Creazione</th>
+                            <th scope="col">Data Scadenza</th>
+                            <th scope="col">CVV</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger text-white" style="--bs-btn-bg: #dc3545" data-bs-dismiss="modal" onclick="resetFunction2()">Chiudi</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- MODAL NUMERO 4 -- CONTROLLO CREDITO RESIDUO -->
+<div class="modal fade" id="modal4">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
 
@@ -230,6 +292,9 @@
         $('#myInput').trigger('focus')
     })
     $('#modal3').on('shown.bs.modal', function () {
+        $('#myInput').trigger('focus')
+    })
+    $('#modal4').on('shown.bs.modal', function () {
         $('#myInput').trigger('focus')
     })
 
@@ -309,6 +374,46 @@
     });
 });
 
+    $("#bottonecheckCarte").click(function() {
+        $.ajax({
+            url: '${pageContext.request.contextPath}/AdminUserManager/getCards',
+            method: "GET",
+            dataType: "json",
+            success: function(response) {
+                if (response.success) {
+                    var cards = response.cards;
+                    var tableBody = $("#CardListTable tbody");
+                    console.log(cards);
+                    // Itera attraverso i movimenti e crea le righe della tabella
+                    $.each(cards, function(index, carta) {
+                        var row = $("<tr>");
+                        row.append($("<td>").text(carta.cardNum));
+                        row.append($("<td>").text(carta.creationDate));
+                        row.append($("<td>").text(carta.expireDate));
+                        row.append($("<td>").text(carta.cvv));
+                        tableBody.append(row);
+                    });
+
+
+                } else {
+                    $("#modal4").modal("hide");
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                    var htmlToInsert = `
+                          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Operazione Fallita!</strong>   ` + response.message +
+                        `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>`;
+                    $("#responseDiv").html(htmlToInsert);
+                }
+            },
+            error: function() {
+                console.log("Errore nella richiesta AJAX");
+            }
+        });
+    });
+
+
 
     $('#formCheckBalance')
         .ajaxForm({
@@ -326,7 +431,7 @@
 
                 } else {
                     // Se success è false, aggiungi un messaggio di errore
-                    $("#modal3").modal("hide");
+                    $("#modal4").modal("hide");
                     $('body').removeClass('modal-open');
                     $('.modal-backdrop').remove();
 
@@ -352,6 +457,10 @@
     function resetFunction() {
         $("#bottoneGenerazione").prop("disabled", false);
         $("#transactionHistoryTable tbody").empty()
+    }
+
+    function resetFunction2() {
+        $("#CardListTable tbody").empty()
     }
 
 </script>
