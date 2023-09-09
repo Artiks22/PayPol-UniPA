@@ -23,18 +23,18 @@ public class AuthenticationManager extends HttpServlet {
 
 
     protected void registration(HttpServletRequest request, HttpServletResponse response) throws NoSuchAlgorithmException, SQLException, IOException {
-        System.out.println("test2 sono arrivato a questo punto?");
         ServiziUtenti serviziUtenti = new ServiziUtenti();
         JSONObject Jlocation = new JSONObject();
         PasswordEncryption passwordEncryption = new PasswordEncryption();
 
         request.setCharacterEncoding("UTF-8");
+        //retrieve dei parametri dal form
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String nome = request.getParameter("nome");
         String cognome = request.getParameter("cognome");
         int userType = Integer.parseInt(request.getParameter("tipoUtente"));
-
+        //flag che utilizzerò per verificare se esiste l'utente già nel db - la verifica viene fatta sull'email.
         boolean userEsistente = false;
         try {
             userEsistente = serviziUtenti.checkUtenteEsistente(email);
@@ -42,7 +42,7 @@ public class AuthenticationManager extends HttpServlet {
             e.printStackTrace();
         }
 
-        if(!userEsistente) {
+        if(!userEsistente) { //Se l'utente non esiste già procedo con la registrazione
             //cifro la password
             String passwordCifrata = passwordEncryption.cypher(password);
 
@@ -52,7 +52,7 @@ public class AuthenticationManager extends HttpServlet {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            if(inserito){
+            if(inserito){ //se inserito è true e la registrazione ha avuto successo
                 Utente utente = null;
                 try {
                    utente = serviziUtenti.getUtente(email, password);
@@ -60,7 +60,6 @@ public class AuthenticationManager extends HttpServlet {
                     throw new RuntimeException(e);
                 }
                 Jlocation.put("success", true);
-                Jlocation.put("address", "/PayPol/");
                 Jlocation.put("message", "utente registrato correttamente");
                 Jlocation.put("user", utente);
                 String location = Jlocation.toString();
@@ -68,7 +67,7 @@ public class AuthenticationManager extends HttpServlet {
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write(location);
             }
-            else{
+            else{ //inserimento fallito
 
                 Jlocation.put("success", false);
                 Jlocation.put("message", "errore durante la registrazione");
@@ -110,7 +109,7 @@ public class AuthenticationManager extends HttpServlet {
 
         if(utente.getNome()!=null){
 
-            //generiamo la sessione
+            //genero la sessione
 
 
             int userType = utente.getUserType();
@@ -127,26 +126,6 @@ public class AuthenticationManager extends HttpServlet {
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(location);
-
-
-
-//            switch(utente.getUserType()){
-//                case 1:
-//                    response.sendRedirect("/PayPol/View/HPUser.jsp");
-//                    break;
-//
-//                case 2:
-//                    response.sendRedirect("/PayPol/View/HPSeller.jsp");
-//                    break;
-//
-//                case 3:
-//                    response.sendRedirect("/PayPol/View/HPAdmin.jsp");
-//                    break;
-//
-//                default:
-//                    response.sendRedirect("/PayPol/index.jsp");
-//
-//            }
         }
         else{
 
@@ -157,9 +136,6 @@ public class AuthenticationManager extends HttpServlet {
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(location);
 
-
-
-
         }
 
     }
@@ -169,7 +145,7 @@ public class AuthenticationManager extends HttpServlet {
         ConnectionDB connectionDB = new ConnectionDB();
         HttpSession session = request.getSession(false);
         System.out.println("invalidata sessione con ID:" + session.getId());
-        session.invalidate();
+        session.invalidate(); //invalido la sessione e facciamo redirect all'index.
 
         //request.getRequestDispatcher("/index.jsp").forward(request, response);
         response.sendRedirect("/PayPol/index.jsp");

@@ -116,7 +116,7 @@
 <nav class="navbar navbar-expand-lg bg-light">
   <div class="container-fluid">
     <a class="navbar-brand mt-2 mt-lg-0" href="/PayPol">
-      <img src="${pageContext.request.contextPath}/View/img/testlogo.svg" alt="PayPol" width="170" height="50">
+      <img src="${pageContext.request.contextPath}/View/img/LogoPayPolFinal.svg" alt="PayPol" width="170" height="50">
     </a>
     <div class="d-flex alight-items-center">
       <a href="/PayPol"> <i class="bi bi-house-door"></i> </a>

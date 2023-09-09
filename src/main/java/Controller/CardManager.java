@@ -25,6 +25,7 @@ import org.json.JSONObject;
                                                 "/CardManager/UpdateStatusCard"})
 public class CardManager extends HttpServlet {
 
+    //funzione per il controllo del credito
     public void checkBalance(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, SQLException {
 
         HttpSession session = request.getSession(false);
@@ -34,13 +35,13 @@ public class CardManager extends HttpServlet {
 
         JSONObject JObj = new JSONObject();
         request.setCharacterEncoding("UTF-8");
-        String numCarta = request.getParameter("CardCredit");
+        String numCarta = request.getParameter("CardCredit"); //prendo il parametro numero di carta dal form
         String balance = null;
-        boolean isBlocked;
+        boolean isBlocked; //flag per la verifica del blocco sul venditore
 
-
+        //controllo stato venditore -> viene controllato a prescindere, l'unico usertype che utilizza il flag è il venditore, altrimenti è posto a "non bloccato" di default.
         boolean statoSeller = serviziUtente.getSellerStatus(utente.getEmail());
-        if (statoSeller) {
+        if (statoSeller) { //se bloccato
             JObj.put("success", false);
             JObj.put("message", "L'account dal quale cerchi di effettuare i movimenti risulta bloccato!");
 
@@ -48,9 +49,9 @@ public class CardManager extends HttpServlet {
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(jobj);
-        } else {
+        } else { //altrimenti non bloccato
 
-            try {
+            try { //controllo lo status della carta (anche quella può essere bloccata)
                 isBlocked = ServiziCarta.getCardStatus(numCarta);
             } catch (
                     SQLException e) {
@@ -63,14 +64,14 @@ public class CardManager extends HttpServlet {
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write(obj);
-            } else {
+            } else { //se non è bloccata procedo con l'operazione di controllo del credito
 
                 try {
                     balance = serviziCarta.checkCredito(numCarta);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                if (balance == null) {
+                if (balance == null) { //se restituisce null è il caso in cui la query a db restituisce null perchè non trova corrispondenza
                     JObj.put("failed", false);
                     JObj.put("message", "Attenzione! Il numero di carta inserito non è esistente!");
                     String obj = JObj.toString();
@@ -93,7 +94,7 @@ public class CardManager extends HttpServlet {
             }
         }
     }
-
+    //funzione per la creazione carte
     public void CreateCard (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, SQLException {
         ServiziCarta serviziCarta = new ServiziCarta();
         ServiziUtenti serviziUtenti = new ServiziUtenti();
@@ -143,7 +144,7 @@ public class CardManager extends HttpServlet {
 
     }
 
-
+//funzione per aggiornare il balance delle carte di credito
     public void updateBalance(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, SQLException {
 
         JSONObject JObj = new JSONObject();
@@ -162,8 +163,8 @@ public class CardManager extends HttpServlet {
         boolean isBlocked;
         boolean inseritoMovimento;
 
-        if (utente.getUserType() == 2 || utente.getUserType() == 3 ) {
-            boolean statoSeller = serviziUtente.getSellerStatus(utente.getEmail());
+        if (utente.getUserType() == 2 || utente.getUserType() == 3 ) { //controllo se ad effettuare l'azione sia un negoziante o admin -> l'utente non può
+            boolean statoSeller = serviziUtente.getSellerStatus(utente.getEmail()); //check se lo stato seller è bloccato
             if (statoSeller) {
                 JObj.put("success", false);
                 JObj.put("message", "L'account dal quale cerchi di effettuare i movimenti risulta bloccato!");
@@ -172,29 +173,29 @@ public class CardManager extends HttpServlet {
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write(jobj);
-            } else {
+            } else { //se non bloccato controlla anche lo status della carta
                 try {
                     isBlocked = ServiziCarta.getCardStatus(numCarta);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
-                if (isBlocked) {
+                if (isBlocked) { //carta bloccata
                     JObj.put("failed", false);
                     JObj.put("message", "La carta risulta essere bloccata e non è possibile effettuare l'operazione!");
                     String obj = JObj.toString();
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");
                     response.getWriter().write(obj);
-                } else {
-                    if (operazione.equals("Accredito")) {
+                } else { //carta non bloccata
+                    if (operazione.equals("Accredito")) { //se l'operazione scelta è accredito cambia il flag a true, altrimenti lo lascia su false (addebito)
                         sceltamov = true;
                     }
                     try {
-                        creditoAttuale = Float.parseFloat(ServiziCarta.checkCredito(numCarta));
+                        creditoAttuale = Float.parseFloat(ServiziCarta.checkCredito(numCarta)); //retrieve del creditoattuale su carta
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
-                    if (!sceltamov && creditoAttuale < value) {
+                    if (!sceltamov && creditoAttuale < value) { //se la scelta del movimento è ADDEBITO (flag sceltamov false) e il credito disponibile è minore di quello da addebitare
                         JObj.put("failed", false);
                         JObj.put("message", "Il valore inserito e' superiore al credito presente sul conto");
                         String obj = JObj.toString();
@@ -202,7 +203,7 @@ public class CardManager extends HttpServlet {
                         response.setCharacterEncoding("UTF-8");
                         response.getWriter().write(obj);
 
-                    } else if (!sceltamov && creditoAttuale > value) {
+                    } else if (!sceltamov && creditoAttuale > value) { //se la scelta movimento è addebito e il credito è sufficiente procede
                         String creditoaggiornato;
                         try {
                             LocalDate dataoggi = LocalDate.now();
@@ -215,7 +216,7 @@ public class CardManager extends HttpServlet {
 
                         JObj.put("success", true);
                         JObj.put("message", "Addebito Eseguito, nuovo credito:");
-                        JObj.put("value", creditoaggiornato + "$");
+                        JObj.put("value", creditoaggiornato + "€");
                         String obj = JObj.toString();
                         response.setContentType("application/json");
                         response.setCharacterEncoding("UTF-8");
@@ -233,7 +234,7 @@ public class CardManager extends HttpServlet {
 
                         JObj.put("success", true);
                         JObj.put("message", "Accredito eseguito, nuovo credito:");
-                        JObj.put("value", creditoaggiornato + "$");
+                        JObj.put("value", creditoaggiornato + "€");
                         String obj = JObj.toString();
                         response.setContentType("application/json");
                         response.setCharacterEncoding("UTF-8");
@@ -251,7 +252,7 @@ public class CardManager extends HttpServlet {
         }
     }
 
-
+//funzione per blocco e sblocco delle carte da parte dell'admin.
     public void UpdateStatusCard(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, SQLException {
         ServiziCarta serviziCarta = new ServiziCarta();
         JSONObject JObj = new JSONObject();
@@ -263,19 +264,19 @@ public class CardManager extends HttpServlet {
         boolean statoCarta;
         boolean cartaEsistente;
 
-
         try {
-            statoCarta = serviziCarta.getCardStatus(numCarta);
+            cartaEsistente = serviziCarta.cardExists(numCarta);//verifico l'esistenza della carta in base al numero inserito.
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         try {
-            cartaEsistente = serviziCarta.cardExists(numCarta);
+            statoCarta = serviziCarta.getCardStatus(numCarta); //ottengo lo status della carta
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
 
         if(!cartaEsistente) {
             JObj.put("success", false);
@@ -311,7 +312,7 @@ public class CardManager extends HttpServlet {
 
             } else if (operazione.equals("Sblocca")) {
                 if(statoCarta) {
-                    //                carta esiste è bloccata con Flag =1, la sblocco
+                    //carta esiste è bloccata con Flag =1, la sblocco
                     try {
                         ServiziCarta.updateCardStatus(numCarta, false);
                     } catch (SQLException e) {

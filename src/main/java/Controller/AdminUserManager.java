@@ -21,20 +21,17 @@ import org.json.JSONObject;
 
 public class AdminUserManager extends HttpServlet {
 
-
+    //Funzionalità ADMIN utilizzata per aggiornare lo status del venditore Bloccato/Sbloccato
     public void UpdateSellerStatus(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, SQLException {
         ServiziUtenti serviziUtente = new ServiziUtenti();
-
         JSONObject JObj = new JSONObject();
         request.setCharacterEncoding("UTF-8");
-
-
         String emailseller = request.getParameter("emailSeller");
         String operazione= request.getParameter("movimento");
         boolean statoSeller;
         boolean userExists;
 
-
+        //lo status viene recuperato mediante l'email associata al negoziante
         try {
             statoSeller = serviziUtente.getSellerStatus(emailseller);
 
@@ -60,7 +57,7 @@ public class AdminUserManager extends HttpServlet {
 
             if(operazione.equals("Blocca")) {
                 if(!statoSeller) {
-                    //carta esiste e non è bloccata Flag = 0
+                    //Se l'utente esiste e lo status del Venditore è NON BLOCCATO (Flag posto a false 0)
                     try {
                         ServiziUtenti.updateSellerStatus(emailseller, true);
                     } catch (SQLException e) {
@@ -73,6 +70,7 @@ public class AdminUserManager extends HttpServlet {
                     response.setCharacterEncoding("UTF-8");
                     response.getWriter().write(location);
                 } else if (statoSeller) {
+                    //Se l'utente esiste e lo status del Venditore è BLOCCATO (Flag posto a true 1)
                     JObj.put("success", false);
                     JObj.put("message", "Il negoziante risulta già essere Bloccato!");
                     response.setContentType("application/json");
@@ -83,7 +81,7 @@ public class AdminUserManager extends HttpServlet {
 
             } else if (operazione.equals("Sblocca")) {
                 if(statoSeller) {
-                    //                carta esiste è bloccata con Flag =1, la sblocco
+                    //Se l'utente esiste e lo status del Venditore è GIÀ BLOCCATO (Flag posto a true 1) -> procedo sbloccandolo
                     try {
                         ServiziUtenti.updateSellerStatus(emailseller, false);
                     } catch (SQLException e) {
@@ -96,6 +94,7 @@ public class AdminUserManager extends HttpServlet {
                     response.setCharacterEncoding("UTF-8");
                     response.getWriter().write(location);
                 } else if (!statoSeller) {
+                    //Se l'utente esiste e lo status del Venditore è GIÀ SBLOCCATO (Flag posto a false 0) -> messaggio errore
                     JObj.put("success", false);
                     JObj.put("message", "Il negoziante risulta già NON essere bloccato!");
                     response.setContentType("application/json");
@@ -111,19 +110,23 @@ public class AdminUserManager extends HttpServlet {
 
     public void getTransactionHistory(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, SQLException {
 
+        ServiziUtenti serviziUtente = new ServiziUtenti();
         ServiziMovimenti serviziMovimenti = new ServiziMovimenti();
         HttpSession session = request.getSession(false);
-        Utente utente = (Utente) session.getAttribute("currentSessionUser");
-        ServiziUtenti serviziUtenti = new ServiziUtenti();
-        JSONObject JObj = new JSONObject();
-        int id  = utente.getId();
         request.setCharacterEncoding("UTF-8");
-        //Chiamo la funzione per ottenere l'intera lista di movimenti
+        JSONObject JObj = new JSONObject();
+
+        //Recupero l'oggetto utente dalla http session, e in particolare mi servo del parametro idUser salvato all'interno dello stesso.
+        Utente utente = (Utente) session.getAttribute("currentSessionUser");
+        int id  = utente.getId();
+
+        //Richiamo la funzione ed ottengo l'intera lista di movimenti mediante uso di ArrayList
         ArrayList<Movimenti> movimenti =  serviziMovimenti.ottieniMovimenti(id);
-        ServiziUtenti serviziUtente = new ServiziUtenti();
+
 
         if(utente.getUserType() == 2){
             boolean statoSeller = serviziUtente.getSellerStatus(utente.getEmail());
+            //Controllo sullo status del Venditore (Se bloccato non può effettuare operazioni)
             if (statoSeller){
                 JObj.put("success", false);
                 JObj.put("message", "L'account dal quale cerchi di recuperare la lista transazioni risulta bloccato!");
@@ -133,7 +136,7 @@ public class AdminUserManager extends HttpServlet {
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write(jobj);
             }
-            else {
+            else { //se sbloccato può procedere con l'operazione di recupero dei movimenti.
                 if(movimenti!=null) {
 
                     JObj.put("success", true);
@@ -153,7 +156,7 @@ public class AdminUserManager extends HttpServlet {
                     response.getWriter().write(location);
                 }
             }
-        } else {
+        } else { //Stesso codice precedente ma riguardante le altre tipologie di utente.
             if(movimenti!=null) {
 
                 JObj.put("success", true);
@@ -175,11 +178,13 @@ public class AdminUserManager extends HttpServlet {
         }
     }
 
+    //funzionalità Utente e Venditore per recuperare la lista delle carte in possesso
     public void getCardsUser(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, SQLException {
         ServiziUtenti serviziUtenti = new ServiziUtenti();
         HttpSession session = request.getSession(false);
-        Utente utente = (Utente) session.getAttribute("currentSessionUser");
         JSONObject JObj = new JSONObject();
+        //Recupero l'oggetto utente dalla http session, e in particolare mi servo del parametro idUser salvato all'interno dello stesso.
+        Utente utente = (Utente) session.getAttribute("currentSessionUser");
         int id  = utente.getId();
         request.setCharacterEncoding("UTF-8");
 
@@ -187,6 +192,7 @@ public class AdminUserManager extends HttpServlet {
         ArrayList<Carta> carte =  serviziUtenti.ottieniCarte(id);
 
         if(utente.getUserType() == 2){
+            //Controllo sullo status del Venditore (Se bloccato non può effettuare operazioni)
             boolean statoSeller = serviziUtenti.getSellerStatus(utente.getEmail());
             if (statoSeller){
                 JObj.put("success", false);
@@ -198,7 +204,7 @@ public class AdminUserManager extends HttpServlet {
                 response.getWriter().write(jobj);
             }
             else {
-                if(carte!=null) {
+                if(carte!=null) { //se è in possesso di carte le inserisce nell'oggetto json della risposta
 
                     JObj.put("success", true);
                     JObj.put("message", "carte ottenute");
@@ -208,7 +214,7 @@ public class AdminUserManager extends HttpServlet {
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");
                     response.getWriter().write(jobj);
-                } else {
+                } else { //se non è in possesso di carte -> messaggio di errore
                     JObj.put("success", false);
                     JObj.put("message", "Non sono presenti carte in possesso.");
                     String location = JObj.toString();
@@ -217,7 +223,7 @@ public class AdminUserManager extends HttpServlet {
                     response.getWriter().write(location);
                 }
             }
-        } else {
+        } else { //Stesso codice precedente ma riguardante le altre tipologie di utente.
             if(carte!=null) {
 
                 JObj.put("success", true);
