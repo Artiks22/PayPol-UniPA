@@ -162,93 +162,110 @@ public class CardManager extends HttpServlet {
 
         boolean isBlocked;
         boolean inseritoMovimento;
+        boolean cartaEsistente;
 
-        if (utente.getUserType() == 2 || utente.getUserType() == 3 ) { //controllo se ad effettuare l'azione sia un negoziante o admin -> l'utente non può
-            boolean statoSeller = serviziUtente.getSellerStatus(utente.getEmail()); //check se lo stato seller è bloccato
-            if (statoSeller) {
-                JObj.put("success", false);
-                JObj.put("message", "L'account dal quale cerchi di effettuare i movimenti risulta bloccato!");
+        try {
+            cartaEsistente = serviziCarta.cardExists(numCarta);//verifico l'esistenza della carta in base al numero inserito.
 
-                String jobj = JObj.toString();
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-                response.getWriter().write(jobj);
-            } else { //se non bloccato controlla anche lo status della carta
-                try {
-                    isBlocked = ServiziCarta.getCardStatus(numCarta);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-                if (isBlocked) { //carta bloccata
-                    JObj.put("failed", false);
-                    JObj.put("message", "La carta risulta essere bloccata e non è possibile effettuare l'operazione!");
-                    String obj = JObj.toString();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (!cartaEsistente) {
+            JObj.put("success", false);
+            JObj.put("message", "La carta non risulta presente nel database!");
+            response.setContentType("application/json");
+            String location = JObj.toString();
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(location);
+        } else {
+            if (utente.getUserType() == 2 || utente.getUserType() == 3) { //controllo se ad effettuare l'azione sia un negoziante o admin -> l'utente non può
+                boolean statoSeller = serviziUtente.getSellerStatus(utente.getEmail()); //check se lo stato seller è bloccato
+                if (statoSeller) {
+                    JObj.put("success", false);
+                    JObj.put("message", "L'account dal quale cerchi di effettuare i movimenti risulta bloccato!");
+
+                    String jobj = JObj.toString();
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");
-                    response.getWriter().write(obj);
-                } else { //carta non bloccata
-                    if (operazione.equals("Accredito")) { //se l'operazione scelta è accredito cambia il flag a true, altrimenti lo lascia su false (addebito)
-                        sceltamov = true;
-                    }
+                    response.getWriter().write(jobj);
+                } else { //se non bloccato controlla anche lo status della carta
                     try {
-                        creditoAttuale = Float.parseFloat(ServiziCarta.checkCredito(numCarta)); //retrieve del creditoattuale su carta
+                        isBlocked = ServiziCarta.getCardStatus(numCarta);
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
-                    if (!sceltamov && creditoAttuale < value) { //se la scelta del movimento è ADDEBITO (flag sceltamov false) e il credito disponibile è minore di quello da addebitare
+                    if (isBlocked) { //carta bloccata
                         JObj.put("failed", false);
-                        JObj.put("message", "Il valore inserito e' superiore al credito presente sul conto");
+                        JObj.put("message", "La carta risulta essere bloccata e non è possibile effettuare l'operazione!");
                         String obj = JObj.toString();
                         response.setContentType("application/json");
                         response.setCharacterEncoding("UTF-8");
                         response.getWriter().write(obj);
-
-                    } else if (!sceltamov && creditoAttuale > value) { //se la scelta movimento è addebito e il credito è sufficiente procede
-                        String creditoaggiornato;
+                    } else { //carta non bloccata
+                        if (operazione.equals("Accredito")) { //se l'operazione scelta è accredito cambia il flag a true, altrimenti lo lascia su false (addebito)
+                            sceltamov = true;
+                        }
                         try {
-                            LocalDate dataoggi = LocalDate.now();
-                            creditoaggiornato = ServiziCarta.updateBalance(numCarta, value, sceltamov);
-                            inseritoMovimento = ServiziMovimenti.creaMovimenti(Date.valueOf(dataoggi), -value, numCarta);
+                            creditoAttuale = Float.parseFloat(ServiziCarta.checkCredito(numCarta)); //retrieve del creditoattuale su carta
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
                         }
+                        if (!sceltamov && creditoAttuale < value) { //se la scelta del movimento è ADDEBITO (flag sceltamov false) e il credito disponibile è minore di quello da addebitare
+                            JObj.put("failed", false);
+                            JObj.put("message", "Il valore inserito e' superiore al credito presente sul conto");
+                            String obj = JObj.toString();
+                            response.setContentType("application/json");
+                            response.setCharacterEncoding("UTF-8");
+                            response.getWriter().write(obj);
+
+                        } else if (!sceltamov && creditoAttuale > value) { //se la scelta movimento è addebito e il credito è sufficiente procede
+                            String creditoaggiornato;
+                            try {
+                                LocalDate dataoggi = LocalDate.now();
+                                creditoaggiornato = ServiziCarta.updateBalance(numCarta, value, sceltamov);
+                                inseritoMovimento = ServiziMovimenti.creaMovimenti(Date.valueOf(dataoggi), -value, numCarta);
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            }
 
 
-                        JObj.put("success", true);
-                        JObj.put("message", "Addebito Eseguito, nuovo credito:");
-                        JObj.put("value", creditoaggiornato + "€");
-                        String obj = JObj.toString();
-                        response.setContentType("application/json");
-                        response.setCharacterEncoding("UTF-8");
-                        response.getWriter().write(obj);
-                    } else if (sceltamov) {
-                        String creditoaggiornato;
-                        try {
-                            LocalDate dataoggi = LocalDate.now();
-                            creditoaggiornato = ServiziCarta.updateBalance(numCarta, value, sceltamov);
-                            inseritoMovimento = ServiziMovimenti.creaMovimenti(Date.valueOf(dataoggi), value, numCarta);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
+                            JObj.put("success", true);
+                            JObj.put("message", "Addebito Eseguito, nuovo credito:");
+                            JObj.put("value", creditoaggiornato + "€");
+                            String obj = JObj.toString();
+                            response.setContentType("application/json");
+                            response.setCharacterEncoding("UTF-8");
+                            response.getWriter().write(obj);
+                        } else if (sceltamov) {
+                            String creditoaggiornato;
+                            try {
+                                LocalDate dataoggi = LocalDate.now();
+                                creditoaggiornato = ServiziCarta.updateBalance(numCarta, value, sceltamov);
+                                inseritoMovimento = ServiziMovimenti.creaMovimenti(Date.valueOf(dataoggi), value, numCarta);
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            }
+
+
+                            JObj.put("success", true);
+                            JObj.put("message", "Accredito eseguito, nuovo credito:");
+                            JObj.put("value", creditoaggiornato + "€");
+                            String obj = JObj.toString();
+                            response.setContentType("application/json");
+                            response.setCharacterEncoding("UTF-8");
+                            response.getWriter().write(obj);
                         }
-
-
-                        JObj.put("success", true);
-                        JObj.put("message", "Accredito eseguito, nuovo credito:");
-                        JObj.put("value", creditoaggiornato + "€");
-                        String obj = JObj.toString();
-                        response.setContentType("application/json");
-                        response.setCharacterEncoding("UTF-8");
-                        response.getWriter().write(obj);
                     }
                 }
+            } else {
+                JObj.put("failed", false);
+                JObj.put("message", "L'utente corrente non risulta essere un Negoziante, pertanto non può effettuare l'azione desiderata.");
+                String obj = JObj.toString();
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(obj);
             }
-        } else {
-            JObj.put("failed", false);
-            JObj.put("message", "L'utente corrente non risulta essere un Negoziante, pertanto non può effettuare l'azione desiderata.");
-            String obj = JObj.toString();
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(obj);
         }
     }
 
