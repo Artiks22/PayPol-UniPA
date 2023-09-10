@@ -9,7 +9,7 @@ public class ServiziCarta {
     public ServiziCarta(){
 
     }
-
+    //funzione di check del credito passando il numero della carta
     public static String checkCredito(String numCarta) throws SQLException {
 
 
@@ -33,7 +33,7 @@ public class ServiziCarta {
 
         return balance;
     }
-
+    //funzione utilizzata per aggiornare il bilancio di una carta, passando numero carta, importo, e un booleano per indicare il tipo di operazione
     public static String updateBalance(String numCarta, float valore, boolean operazione) throws SQLException {
         ConnectionDB connessioneDB = new ConnectionDB();
         Connection connection = connessioneDB.getConnection();
@@ -62,7 +62,7 @@ public class ServiziCarta {
 
         return String.valueOf(creditoupdated);
     }
-
+    //funzione di creazione carta
     public static void creaCarta(String numCarta, int idUser, float value, LocalDate dataCreazione, LocalDate dataScadenza, String cvv) throws SQLException {
 
         ConnectionDB connessioneDB = new ConnectionDB();
@@ -82,7 +82,7 @@ public class ServiziCarta {
         query.close();
         connection.close();
     }
-
+    //funzione per fare il fetch dello status della carta dal db
     public static boolean getCardStatus(String numCarta) throws SQLException {
         ConnectionDB connessioneDB = new ConnectionDB();
         Connection connection = connessioneDB.getConnection();
@@ -100,7 +100,7 @@ public class ServiziCarta {
         connection.close();
         return statoCarta;
     }
-
+    //funzione che consente l'aggiornamento dello status della carta al db
     public static void updateCardStatus(String numCarta, boolean op) throws SQLException {
         ConnectionDB connessioneDB = new ConnectionDB();
         Connection connection = connessioneDB.getConnection();
@@ -113,7 +113,7 @@ public class ServiziCarta {
         query.close();
         connection.close();
     }
-
+    //funzione per verifica esistenza carta
     public static boolean cardExists(String numCarta) throws SQLException {
         ConnectionDB connessioneDB = new ConnectionDB();
         Connection connection = connessioneDB.getConnection();

@@ -8,7 +8,7 @@ public class ServiziMovimenti
 {
     public ServiziMovimenti() {
     }
-    
+    //funzione che inserisce nella tabella apposita al db i movimenti effettuati
     public static boolean creaMovimenti(Date dataMovimento, float importo, String cartaRicevente) throws SQLException {
         boolean inserito = false;
 
@@ -32,7 +32,9 @@ public class ServiziMovimenti
 
         return inserito;
     }
-    
+
+    //funzione restituente arraylist di movimenti, per fare il fetch di tutti i movimenti effettuati da un utente.
+    //Per fare ho effettuato un inner join per ottenere tutti i movimenti dell'utente (dato ownerID) con tutte le carte in suo possesso
     public ArrayList<Movimenti> ottieniMovimenti(int idOwner) throws SQLException {
 
         ArrayList<Movimenti> movimenti = new ArrayList<>();

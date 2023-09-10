@@ -1,3 +1,4 @@
+<%@ page import="Model.Utente" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -53,6 +54,36 @@
     <div class="mask" style="background-color: rgba(0, 0, 0, 0.8);">
       <div class="container d-flex align-items-center  justify-content-center text-center h-100">
         <div class="text-white align-items-center">
+
+<%--BOTTONE DINAMICO PER RITORNARE ALLA HOMEPAGE DELL'UTENTE PERSONALE--%>
+  <%
+    Utente utente = (Utente) session.getAttribute("currentSessionUser");
+    if (utente != null) {
+      int userType = utente.getUserType();
+      if (userType == 1) {
+  %>
+  <br><a href="/PayPol/View/HPUser.jsp">
+    <button class="btn btn-outline-light">HomePage Personale</button>
+  </a>
+  <%
+  } else if (userType == 2) {
+  %>
+  <br><a href="/PayPol/View/HPSeller.jsp">
+    <button class="btn btn-outline-light">HomePage Personale</button>
+  </a>
+  <%
+  } else if (userType == 3) {
+  %>
+  <br><a href="/PayPol/View/HPAdmin.jsp">
+    <button class="btn btn-outline-light">HomePage Personale</button>
+  </a>
+  <%
+      }
+    }
+  %>
+
+
+
           <h1 class="pt-5 mb-3">Benvenuto in PayPol!</h1>
           <h5 class="mb-4">Si tratta di un progetto Universitario, oggetto di esame della materia <i>Web systems design and architecture</i> </h5>
           <a href="https://www.unipa.it/persone/docenti/l/marco.lacascia/?pagina=insegnamento&idInsegnamento=148534&idCattedra=142870" target="_blank"><button class="btn btn-outline-light ">Link Insegnamento</button></a><br>
@@ -64,7 +95,8 @@
             <li class="list-group-item active"><strong> Funzioni base:</strong>  <i>(Più funzioni opzionali in italic)</i> </li>
             <li class="list-group-item"><strong>Chiunque:</strong><br>
               Accedere a una pagina che controlla il credito residuo di una carta noto il numero <i class="bi bi-check2"></i><br>
-              <i>Generare report con le operazioni fatte</i> <i class="bi bi-check2"></i></li>
+              <i>Generare report con le operazioni fatte</i> <i class="bi bi-check2"></i><br>
+              <i>Generare report con la lista delle carte in possesso (Non richiesto da consegna)</i> <i class="bi bi-check2"></i></li>
             <li class="list-group-item"><strong>Negoziante:</strong><br>
               Accedere a una pagina in cui può fare un addebito o una ricarica su una carta noto il numero <i class="bi bi-check2"></i><br>
               <i>Generare report con le operazioni fatte</i> <i class="bi bi-check2"></i>
@@ -85,14 +117,9 @@
       </div>
     </div>
 
-  <!-- Background image -->
 </header>
 
-<%--<a href="View/registrationPage.jsp">Registrati!</a>--%>
-<%--<a href="View/loginpage.jsp">Login</a><br>--%>
-<%--<a href="${pageContext.request.contextPath}/AuthenticationManager/logout">Logout</a>--%>
-<%--<a href="View/HPUser.jsp">check credito</a><br>--%>
-<%--<a href="View/UpdateBalancePage.jsp">update balance</a><br>--%>
+
 
 <footer id="sticky-footer" class="flex-shrink-0 py-4 bg-dark text-white-50">
   <div class="container text-center">

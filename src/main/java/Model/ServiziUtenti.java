@@ -9,7 +9,7 @@ public class ServiziUtenti {
     public ServiziUtenti() {
     }
 
-
+    //verifica se l'utente esiste già (per la registrazione- check con email)
     public boolean checkUtenteEsistente(String email) throws SQLException, NoSuchAlgorithmException {
 
         boolean presente=false;
@@ -36,7 +36,7 @@ public class ServiziUtenti {
         return presente;
 
     }
-
+    //funzione per aggiungere utenti al db (registrazione)
     public boolean aggiungiUtente(String nome, String cognome, String email, String password, int userType) throws SQLException {
         boolean inserito = false;
 
@@ -70,7 +70,7 @@ public class ServiziUtenti {
 
         return inserito;
     }
-
+    //funzione implementata ma non utilizzata (era per ottenere la lista degli utenti)
     public ArrayList<Utente> getUtenti() throws SQLException{
 
         ArrayList<Utente> utenti = new ArrayList<>();
@@ -106,7 +106,7 @@ public class ServiziUtenti {
         return utenti;
 
     }
-
+    //funzione per ottenere l'oggetto utente
     public Utente getUtente(String email,String password) throws SQLException, NoSuchAlgorithmException{
 
         Utente utente = new Utente();
@@ -138,7 +138,7 @@ public class ServiziUtenti {
         return utente;
 
     }
-
+    //restituisce l id utente
     public int getIdUtente(String email) throws SQLException, NoSuchAlgorithmException{
 
         String statement = "SELECT * FROM users WHERE email=?";
@@ -163,7 +163,7 @@ public class ServiziUtenti {
         return id;
 
     }
-
+    //ottenere lo status del venditore (usata per i controlli sulle funzionalità seller)
     public static boolean getSellerStatus(String Email) throws SQLException {
         ConnectionDB connessioneDB = new ConnectionDB();
         Connection connection = connessioneDB.getConnection();
@@ -194,7 +194,7 @@ public class ServiziUtenti {
         connection.close();
     }
 
-
+    //funzione che restituisce arraylist di carte, per stamparne la lista
     public ArrayList<Carta> ottieniCarte(int idOwner) throws SQLException {
 
         ArrayList<Carta> carte = new ArrayList<>();
