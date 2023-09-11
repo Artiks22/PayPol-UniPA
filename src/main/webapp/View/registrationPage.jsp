@@ -45,6 +45,8 @@
                             <div class="col-xl-6">
                                 <div class="card-body p-md-5 text-black">
                                     <form id="form">
+                                        <div id="alertDiv"> </div><br>
+
                                     <h3 class="mb-5 text-uppercase">Form Registrazione Utente</h3>
 
                                     <div class="row">
@@ -64,7 +66,8 @@
 
                                     <div class="row">
                                         <div class="mb-4">
-                                            <div class="form-outline mb-4">
+                                            <div id="registrationEmailDiv"></div>
+                                            <div class="form-outline mb-4" >
                                                 <input type="text" id="email" name="email" class="form-control form-control-lg" />
                                                 <label class="form-label" for="email">Email</label>
                                             </div>
@@ -92,9 +95,7 @@
 
 
                                     </div>
-
-
-
+                                        <div id="registrationPasswordDiv"></div>
                                     <div class="form-outline mb-4" id="registrationPassword">
                                         <input type="password" id="password" name="password" class="form-control form-control-lg" />
                                         <label class="form-label" for="password">Password</label>
@@ -122,47 +123,6 @@
             </div>
         </div>
     </section>
-
-<%-- action="${pageContext.request.contextPath}/AuthenticationManager/registration" method="POST" */--%>
-<%--    <form id="form">--%>
-
-
-
-<%--        <br>--%>
-<%--        <fieldset>--%>
-<%--            <legend>Tipologia Utente:</legend>--%>
-<%--            <div>--%>
-
-<%--                <input type="radio" id="tipoUtente2" name="tipoUtente" value="2" checked>--%>
-<%--                <label for="tipoUtente2">Negoziante</label><br>--%>
-
-
-<%--                <input type="radio" id="tipoUtente1" name="tipoUtente" value="1">--%>
-<%--                <label for="tipoUtente1">Cliente</label><br>--%>
-<%--            </div>--%>
-<%--        </fieldset>--%>
-
-
-
-<%--        <label for="email">Email</label><br>--%>
-<%--        <input type="email" id="email" name="email"><br>--%>
-
-<%--        <label for="nome">Nome:</label><br>--%>
-<%--        <input type="text" id="nome" name="nome"><br>--%>
-
-<%--        <label for="Cognome">Cognome:</label><br>--%>
-<%--        <input type="text" id="cognome" name="cognome"><br>--%>
-
-<%--        <div class="mb-3" id="registrationPassword">--%>
-<%--        <label for="password">Password:</label><br>--%>
-<%--        <input type="password" id="password" name="password"><br>--%>
-<%--        </div>--%>
-
-<%--        <label for="confirmpassword">Conferma password:</label><br>--%>
-<%--        <input type="password" id="confirmpassword" name="confirmpassword"><br>--%>
-
-<%--        <button id="btn-submit" type="submit"> Conferma registrazione</button>--%>
-<%--    </form>--%>
 
 </section>
 </body>
@@ -192,14 +152,21 @@
         if($("#email").val().match(emailRegex)===null){
 
             validation=false;
+            let message="Assicurati che l'email sia scritta correttamente come nell'esempio in seguito: esempio@mail.com";
+            let htmlToInsert = `<div class="alert alert-danger alert-dismissible fade show" role="alert">`+message+` <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`;
+
+            $("#registrationEmailDiv").html(htmlToInsert)
+
+
         }
 
         let pass1= document.getElementById("password").value
         let pass2=document.getElementById("confirmpassword").value
         if($("#password").val().match(passRegex)===null || pass1 != pass2 )  {
+            let message='la password deve essere lunga almeno 8 caratteri, deve contenere una lettera maiuscola,un numero ed un carattere speciale';
+            let htmlToInsert = `<div class="alert alert-danger alert-dismissible fade show" role="alert">`+message+` <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`;
+            $("#registrationPasswordDiv").html(htmlToInsert)
 
-            let message='la password deve essere lunga almeno 8 caratteri, deve contenere una lettera maiuscola,un numero e un carattere speciale';
-            $("#registrationPassword").append('<span class="badge rounded-pill text-bg-danger">'+message+'</span>')
 
             validation=false;
         }
@@ -246,21 +213,41 @@
 
                     if(response.success){
 
-                        let message = response.message;
+                        var htmlToInsert = `
+                          <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Success!</strong>   ` + response.message+ `
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>`;
+                        $("#alertDiv").html(htmlToInsert);
+                        $("#nome").val('');
+                        $("#cognome").val('');
+                        $("#email").val('');
+                        $("#password").val('');
+                        $("#confirmpassword").val('');
+                        // let message = response.message;
+                        //
+                        // const alert = '<div class="alert alert-success col-3 position-fixed top-0 end-0 m-5 p-3" style="z-index: 11" role="alert">'+message+'</div>';
+                        //
+                        // $('.row').append(alert);
+                        //
+                        // window.location=response.address;
 
-                        const alert = '<div class="alert alert-success col-3 position-fixed top-0 end-0 m-5 p-3" style="z-index: 11" role="alert">'+message+'</div>';
 
-                        $('.row').append(alert);
-
-                        window.location=response.address;
                     }
                     else{
+                        var htmlToInsert = `
+                          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Errore!</strong>   ` + response.message +
+                            `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>`;
 
-                        let message = response.message;
+                        $("#alertDiv").html(htmlToInsert);
 
-                        const alert = '<div class="alert alert-danger col-3 position-fixed top-0 end-0 m-5 p-3" style="z-index: 11" role="alert">'+message+'</div>';
-
-                        $('.row').append(alert);
+                        // let message = response.message;
+                        //
+                        // const alert = '<div class="alert alert-danger col-3 position-fixed top-0 end-0 m-5 p-3" style="z-index: 11" role="alert">'+message+'</div>';
+                        //
+                        // $('.row').append(alert);
 
                     }
 

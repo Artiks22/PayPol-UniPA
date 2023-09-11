@@ -156,7 +156,7 @@
             <div id="divBalance" class="modal-body">
                 <form id="formCheckBalance" action="${pageContext.request.contextPath}/CardManager/checkBalance" method="GET" class="form-container">
                     <label for="checkCredito">Numero Carta:</label><br>
-                    <input type="text" placeholder="Inserire Num. Carta" id="checkCredito" name="CardCredit"><br><br>
+                    <input type="number" placeholder="Inserire Num. Carta" id="checkCredito" name="CardCredit"><br><br>
                     <button id="checkBalanceButton" class="btn btn-primary" type="submit"> Effettua Operazione</button>
                 </form>
                 <br>
@@ -276,7 +276,7 @@
                 if (response.success) {
                     var cards = response.cards;
                     var tableBody = $("#CardListTable tbody");
-                    console.log(cards);
+
                     // Itera attraverso i movimenti e crea le righe della tabella
                     $.each(cards, function(index, carta) {
                         var row = $("<tr>");

@@ -62,6 +62,7 @@ public class AuthenticationManager extends HttpServlet {
                 Jlocation.put("success", true);
                 Jlocation.put("message", "utente registrato correttamente");
                 Jlocation.put("user", utente);
+                Jlocation.put("address", "/PayPol");
                 String location = Jlocation.toString();
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");

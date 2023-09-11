@@ -51,14 +51,8 @@ public class ServiziUtenti {
             query.setString(3, email);
             query.setString(4, password);
             query.setInt(5, userType);
-
-        if (userType == 2) {
             query.setInt(6, 0);
-        }
-        else {
-            //query.setNull(6, Types.INTEGER);
-            query.setInt(6, 2);
-        }
+
 
         int rowCount = query.executeUpdate();
         if(rowCount!=0){
@@ -208,10 +202,6 @@ public class ServiziUtenti {
         query.setInt(1,idOwner);
         ResultSet resultSet = query.executeQuery();
 
-        if(!resultSet.next()) {
-            carte = null;
-            return carte;
-        }
 
         while(resultSet.next()){
 
@@ -225,6 +215,12 @@ public class ServiziUtenti {
             carte.add(card);
 
         }
+
+//
+//        if(carte.isEmpty()) {
+//            carte = null;
+//            return carte;
+//        }
 
         query.close();
         resultSet.close();

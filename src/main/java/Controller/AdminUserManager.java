@@ -188,6 +188,7 @@ public class AdminUserManager extends HttpServlet {
         int id  = utente.getId();
         request.setCharacterEncoding("UTF-8");
 
+
         //Chiamo la funzione per ottenere l'arraylist delle carte dell'utente.
         ArrayList<Carta> carte =  serviziUtenti.ottieniCarte(id);
 

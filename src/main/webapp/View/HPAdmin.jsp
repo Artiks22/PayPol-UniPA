@@ -142,7 +142,7 @@
                     <label for="email">Inserire Email:</label><br>
                     <input type="text" name="email" id="email"><br>
                     <label for="valore">Inserire credito iniziale carta:</label><br>
-                    <input type="text" name="valore" id="valore"><br><br>
+                    <input type="number" name="valore" id="valore"><br><br>
                     <button id="createCardButton" class="btn btn-primary" type="submit" data-bs-dismiss="modal" > Crea carta</button>
                 </form>
             </div>
@@ -171,14 +171,15 @@
             <div class="modal-body">
                 <form id="formUpdateStatus" action="${pageContext.request.contextPath}/CardManager/UpdateStatusCard" method="POST">
                     <label for="cardNumber">Inserisci Numero Carta:</label><br>
-                    <input type="text" id="cardNumber" name="cardNumber"><br>
+                    <input type="number" id="cardNumber" name="cardNumber"><br>
                     <label for="movimento">Operazione:</label><br>
 <%--                    <input list="operation" name="movimento" id="movimento">--%>
-                    <input class="form-control" list="operation" id="movimento" name="movimento" placeholder="Scegli operazione fra Blocco o Sblocco"><br>
-                    <datalist id="operation">
-                        <option value="Blocca">
-                        <option value="Sblocca">
-                    </datalist>
+                    <select class="form-select" id="movimento" name="movimento" aria-label="Scegli operazione fra Blocco o Sblocco">
+                        <option selected>Scegli operazione</option>
+                        <option value="Blocca">Blocca</option>
+                        <option value="Sblocca">Sblocca</option>
+
+                    </select><br>
                     <button id="blockUnblockButton" class="btn btn-primary" type="submit" data-bs-dismiss="modal"> Effettua Operazione</button>
                 </form>
             </div>
@@ -207,7 +208,7 @@
             <div id="divBalance" class="modal-body">
                 <form id="formCheckBalance" action="${pageContext.request.contextPath}/CardManager/checkBalance" method="GET" class="form-container">
                     <label for="checkCredito">Numero Carta:</label><br>
-                    <input type="text" placeholder="Inserire Num. Carta" id="checkCredito" name="CardCredit"><br><br>
+                    <input type="number" placeholder="Inserire Num. Carta" id="checkCredito" name="CardCredit"><br><br>
                     <button id="checkBalanceButton" class="btn btn-primary" type="submit" > Effettua Operazione</button>
                 </form>
                 <br>
@@ -242,11 +243,17 @@
                     <input type="text" id="emailSeller" name="emailSeller"><br>
                     <label for="movimento">Operazione:</label><br>
                     <%--                    <input list="operation" name="movimento" id="movimento">--%>
-                    <input class="form-control" list="operation" id="movimento" name="movimento" placeholder="Scegli operazione fra Blocco o Sblocco"><br>
-                    <datalist id="operation">
-                        <option value="Blocca">
-                        <option value="Sblocca">
-                    </datalist>
+<%--                    <input class="form-control" list="operation" id="movimento" name="movimento" placeholder="Scegli operazione fra Blocco o Sblocco"><br>--%>
+<%--                    <datalist id="operation">--%>
+<%--                        <option value="Blocca">--%>
+<%--                        <option value="Sblocca">--%>
+<%--                    </datalist>--%>
+                    <select class="form-select" id="movimento" name="movimento" aria-label="Scegli operazione fra Blocco o Sblocco">
+                        <option selected>Scegli operazione</option>
+                        <option value="Blocca">Blocca</option>
+                        <option value="Sblocca">Sblocca</option>
+
+                    </select><br>
                     <button id="blockUnblockButton" class="btn btn-primary" type="submit" data-bs-dismiss="modal"> Effettua Operazione</button>
                 </form>
             </div>
@@ -406,33 +413,6 @@
 
 
         });
-
-    //NON PIÙ NECESSARI, SOLUZIONE ALTERNATIVA
-    // $(document).ready(function() {
-    //     $("#formCreazione").submit(function(event) {
-    //         // Prevent default form submission
-    //         event.preventDefault();
-    //
-    //
-    //         // chiudo modal dopo il submit
-    //         $("#modal1").modal("hide");
-    //         $('body').removeClass('modal-open');
-    //         $('.modal-backdrop').remove();
-    //     });
-    // });
-
-    // $(document).ready(function() {
-    //     $("#formUpdateStatus").submit(function(event) {
-    //         // Prevent default form submission
-    //         event.preventDefault();
-    //
-    //         // chiudo modal dopo il submit
-    //         $("#modal2").modal("hide");
-    //         $('body').removeClass('modal-open');
-    //         $('.modal-backdrop').remove();
-    //     });
-    // });
-
 
     function chiudiFunction() {
         $('#balanceResult').empty()

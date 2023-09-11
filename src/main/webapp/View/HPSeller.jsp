@@ -143,16 +143,16 @@
                 <form id="formUpdateBalance" action="${pageContext.request.contextPath}/CardManager/updateBalance" method="POST">
                     <div class="switch-body">
                         <label for="sceltaMovimento">Tipologia operazione:</label><br>
-<%--                        <input list="movimento" id="sceltaMovimento" name="sceltaMovimento"><br>--%>
-                        <input class="form-control" list="movimento"  id="sceltaMovimento" name="sceltaMovimento" placeholder="Scegli operazione fra Accredito o Addebito"><br>
-                        <datalist id="movimento">
-                            <option value="Accredito">
-                            <option value="Addebito">
-                        </datalist>
+                        <select class="form-select" id="sceltaMovimento" name="sceltaMovimento" aria-label="Scegli operazione fra Accredito e Addebito">
+                            <option selected>Scegli operazione</option>
+                            <option value="Accredito">Accredito</option>
+                            <option value="Addebito">Addebito</option>
+
+                        </select><br>
                         <label for="numCarta">Numero Carta:</label><br>
                         <input type="number" id="numCarta" name="numCarta" ><br>
                         <label for="importoMov">Importo:</label><br>
-                        <input type="text" id="importoMov" name="importoMov"><br><br>
+                        <input type="number" id="importoMov" name="importoMov"><br><br>
                         <button id="updateBalanceButton" class="btn btn-primary" type="submit" data-bs-dismiss="modal"> Effettua Operazione</button>
                     </div>
                 </form>
@@ -265,7 +265,7 @@
             <div id="divBalance" class="modal-body">
                 <form id="formCheckBalance" action="${pageContext.request.contextPath}/CardManager/checkBalance" method="GET" class="form-container">
                     <label for="checkCredito">Numero Carta:</label><br>
-                    <input type="text" placeholder="Inserire Num. Carta" id="checkCredito" name="CardCredit"><br><br>
+                    <input type="number" placeholder="Inserire Num. Carta" id="checkCredito" name="CardCredit"><br><br>
                     <button id="checkBalanceButton" class="btn btn-primary" type="submit"> Effettua Operazione</button>
                 </form>
                 <br>
@@ -383,7 +383,7 @@
                 if (response.success) {
                     var cards = response.cards;
                     var tableBody = $("#CardListTable tbody");
-                    console.log(cards);
+
                     // Itera attraverso i movimenti e crea le righe della tabella
                     $.each(cards, function(index, carta) {
                         var row = $("<tr>");

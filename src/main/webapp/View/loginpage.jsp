@@ -125,7 +125,7 @@
   });
 
   function redirectFunction(userType){
-    console.log(userType);
+
 
 
     switch (userType) {
