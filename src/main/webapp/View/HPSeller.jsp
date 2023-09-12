@@ -152,7 +152,7 @@
                         <label for="numCarta">Numero Carta:</label><br>
                         <input type="number" id="numCarta" name="numCarta" ><br>
                         <label for="importoMov">Importo:</label><br>
-                        <input type="number" id="importoMov" name="importoMov"><br><br>
+                        <input type="text" oninput="this.value = this.value.replace(',', '.')" id="importoMov" name="importoMov"><br><br>
                         <button id="updateBalanceButton" class="btn btn-primary" type="submit" data-bs-dismiss="modal"> Effettua Operazione</button>
                     </div>
                 </form>
